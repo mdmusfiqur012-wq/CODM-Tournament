@@ -252,7 +252,7 @@ body.admin-mode .admin-only-block{display:block}
 
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loading-screen">
-  <h2>⚡ CODM PORTAL</h2>
+  <h2>⚡ S&amp;D PORTAL</h2>
   <p>CONNECTING TO DATABASE...</p>
   <div class="loading-bar"><div class="loading-bar-inner"></div></div>
 </div>
@@ -706,16 +706,27 @@ const WEAPON_LABELS={ASSAULT:'⚔️ Assault',SMG:'⚡ SMG',LMG:'🔥 LMG',SNIPE
 
 function defaultState() {
   return {
-    settings:{name:'COD Mobile Tournament',season:'Season 1 · 2025',mode:'Search & Destroy',status:'Open',date:'',org:'',adminPass:'admin1234'},
+    settings:{name:'Search & Destroy Tournament',season:'S&D Tournament · 2025',mode:'Search & Destroy',status:'Open',date:'',org:'S&D Tournament Manager',adminPass:'admin1234'},
     maps:[...MAPS_DEFAULT],
     teams:[
-      {name:'Ghost Ops',tag:'GHO',color:'#E8730A',facebook:'',youtube:'',players:[{name:'ShadowX',role:'IGL',weapon:'ASSAULT'},{name:'NightFury',role:'ATK',weapon:'SMG'},{name:'Phantom',role:'ATK',weapon:'ASSAULT'},{name:'Reaper77',role:'DEF',weapon:'SNIPER'},{name:'SpectrumK',role:'SUP',weapon:'LMG'}]},
-      {name:'Iron Wolves',tag:'IWL',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'WolfBane',role:'IGL',weapon:'ASSAULT'},{name:'IronFang',role:'ATK',weapon:'SMG'},{name:'CruelByte',role:'ATK',weapon:'ASSAULT'},{name:'SteelClaw',role:'DEF',weapon:'SNIPER'},{name:'PackLeader',role:'SUP',weapon:'LMG'}]},
-      {name:'Neon Reapers',tag:'NRX',color:'#378ADD',facebook:'',youtube:'',players:[{name:'NeonSlash',role:'IGL',weapon:'SMG'},{name:'PixelGod',role:'ATK',weapon:'ASSAULT'},{name:'FlashKill',role:'ATK',weapon:'SMG'},{name:'MirrorX',role:'DEF',weapon:'SNIPER'},{name:'CircuitBrk',role:'SUP',weapon:'LMG'}]},
-      {name:'Desert Hawks',tag:'DHK',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Talon99',role:'IGL',weapon:'ASSAULT'},{name:'DustDevil',role:'ATK',weapon:'SMG'},{name:'SandStorm',role:'ATK',weapon:'ASSAULT'},{name:'RaptorEye',role:'DEF',weapon:'SNIPER'},{name:'OasisDrop',role:'SUP',weapon:'LMG'}]},
-      {name:'Frost Squad',tag:'FSQ',color:'#D4537E',facebook:'',youtube:'',players:[{name:'IceBreaker',role:'IGL',weapon:'SMG'},{name:'FrostBolt',role:'ATK',weapon:'ASSAULT'},{name:'Glacial',role:'ATK',weapon:'SMG'},{name:'ArcticFox',role:'DEF',weapon:'SNIPER'},{name:'SnowDrift',role:'SUP',weapon:'LMG'}]},
+      {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:'',youtube:'',players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:'',youtube:'',players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:'',youtube:'',players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
     ],
-    matches:[],
+    matches:[
+      {id:1,t1:0,t2:1,s1:null,s2:null,status:"pending",map:"Highrise",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:2,t1:0,t2:2,s1:null,s2:null,status:"pending",map:"Raid",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:3,t1:0,t2:3,s1:null,s2:null,status:"pending",map:"Nuketown",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:4,t1:0,t2:4,s1:null,s2:null,status:"pending",map:"Rust",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:5,t1:1,t2:2,s1:null,s2:null,status:"pending",map:"Shipment",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:6,t1:1,t2:3,s1:null,s2:null,status:"pending",map:"Hackney Yard",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:7,t1:1,t2:4,s1:null,s2:null,status:"pending",map:"Standoff",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:8,t1:2,t2:3,s1:null,s2:null,status:"pending",map:"Highrise",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:9,t1:2,t2:4,s1:null,s2:null,status:"pending",map:"Raid",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+      {id:10,t1:3,t2:4,s1:null,s2:null,status:"pending",map:"Nuketown",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
+    ],
     knockout:{
       q1:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
       elim:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
@@ -738,14 +749,38 @@ async function init() {
     const data = await dbGet();
     if (data && data.settings) {
       S = data;
-      // ensure required fields
       if (!S.knockout) S.knockout={q1:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},elim:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},q2:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},final:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'}};
       if (!S.notices) S.notices=[];
       if (!S.settings.adminPass) S.settings.adminPass='admin1234';
-    } else {
-      // First time — push default state to DB
-      await dbSet(S);
     }
+    // Always overwrite teams with the correct 5 from the PDF
+    const fb=i=>(S.teams&&S.teams[i]&&S.teams[i].facebook)||'';
+    const yt=i=>(S.teams&&S.teams[i]&&S.teams[i].youtube)||'';
+    S.teams=[
+      {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:fb(0),youtube:yt(0),players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:fb(1),youtube:yt(1),players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:fb(2),youtube:yt(2),players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:fb(3),youtube:yt(3),players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:fb(4),youtube:yt(4),players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
+    ];
+    S.settings.name='Search & Destroy Tournament';
+    S.settings.season='S&D Tournament · 2025';
+    S.settings.mode='Search & Destroy';
+    if(!S.matches||S.matches.length===0){
+      S.matches=[
+        {id:1,t1:0,t2:1,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:2,t1:0,t2:2,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:3,t1:0,t2:3,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:4,t1:0,t2:4,s1:null,s2:null,status:'pending',map:'Rust',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:5,t1:1,t2:2,s1:null,s2:null,status:'pending',map:'Shipment',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:6,t1:1,t2:3,s1:null,s2:null,status:'pending',map:'Hackney Yard',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:7,t1:1,t2:4,s1:null,s2:null,status:'pending',map:'Standoff',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:8,t1:2,t2:3,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:9,t1:2,t2:4,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+        {id:10,t1:3,t2:4,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+      ];
+    }
+    await dbSet(S);
     setSyncOnline();
   } catch(e) {
     setSyncOffline();
@@ -883,7 +918,7 @@ function openAddTeam(){
   document.getElementById('m-youtube').value='';
   document.getElementById('delete-team-btn').style.display='none';
   renderColorPicker(COLORS[S.teams.length%COLORS.length]);
-  renderPlayerInputs([{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'ATK',weapon:'SMG'},{name:'',role:'DEF',weapon:'SNIPER'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'IGL',weapon:'SMG'}]);
+  renderPlayerInputs([{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'IGL',weapon:'ASSAULT'}]);
   document.getElementById('team-modal').classList.add('open');
 }
 function openEditTeam(idx){
