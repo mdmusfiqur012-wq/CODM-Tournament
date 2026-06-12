@@ -748,39 +748,41 @@ async function init() {
   try {
     const data = await dbGet();
     if (data && data.settings) {
+      // DB has data — trust it fully (admin edits are preserved)
       S = data;
       if (!S.knockout) S.knockout={q1:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},elim:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},q2:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},final:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'}};
       if (!S.notices) S.notices=[];
       if (!S.settings.adminPass) S.settings.adminPass='admin1234';
+      // Only fix if DB still has the OLD placeholder teams (Ghost Ops, Iron Wolves, etc.)
+      const isOldData = S.teams && S.teams[0] && (S.teams[0].name==='Ghost Ops'||S.teams[0].tag==='GHO'||S.teams.length<5);
+      if(isOldData){
+        S.teams=[
+          {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:'',youtube:'',players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
+          {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
+          {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:'',youtube:'',players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
+          {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
+          {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:'',youtube:'',players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
+        ];
+        if(!S.matches||S.matches.length===0){
+          S.matches=[
+            {id:1,t1:0,t2:1,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:2,t1:0,t2:2,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:3,t1:0,t2:3,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:4,t1:0,t2:4,s1:null,s2:null,status:'pending',map:'Rust',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:5,t1:1,t2:2,s1:null,s2:null,status:'pending',map:'Shipment',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:6,t1:1,t2:3,s1:null,s2:null,status:'pending',map:'Hackney Yard',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:7,t1:1,t2:4,s1:null,s2:null,status:'pending',map:'Standoff',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:8,t1:2,t2:3,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:9,t1:2,t2:4,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+            {id:10,t1:3,t2:4,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
+          ];
+        }
+        await dbSet(S);
+      }
+    } else {
+      // No DB data yet — push defaultState (correct teams already in defaultState)
+      await dbSet(S);
     }
-    // Always overwrite teams with the correct 5 from the PDF
-    const fb=i=>(S.teams&&S.teams[i]&&S.teams[i].facebook)||'';
-    const yt=i=>(S.teams&&S.teams[i]&&S.teams[i].youtube)||'';
-    S.teams=[
-      {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:fb(0),youtube:yt(0),players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:fb(1),youtube:yt(1),players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:fb(2),youtube:yt(2),players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:fb(3),youtube:yt(3),players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:fb(4),youtube:yt(4),players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
-    ];
-    S.settings.name='Search & Destroy Tournament';
-    S.settings.season='S&D Tournament · 2025';
-    S.settings.mode='Search & Destroy';
-    if(!S.matches||S.matches.length===0){
-      S.matches=[
-        {id:1,t1:0,t2:1,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:2,t1:0,t2:2,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:3,t1:0,t2:3,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:4,t1:0,t2:4,s1:null,s2:null,status:'pending',map:'Rust',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:5,t1:1,t2:2,s1:null,s2:null,status:'pending',map:'Shipment',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:6,t1:1,t2:3,s1:null,s2:null,status:'pending',map:'Hackney Yard',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:7,t1:1,t2:4,s1:null,s2:null,status:'pending',map:'Standoff',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:8,t1:2,t2:3,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:9,t1:2,t2:4,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-        {id:10,t1:3,t2:4,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-      ];
-    }
-    await dbSet(S);
     setSyncOnline();
   } catch(e) {
     setSyncOffline();
