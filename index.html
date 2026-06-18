@@ -252,7 +252,7 @@ body.admin-mode .admin-only-block{display:block}
 
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loading-screen">
-  <h2>⚡ S&amp;D PORTAL</h2>
+  <h2>⚡ CODM PORTAL</h2>
   <p>CONNECTING TO DATABASE...</p>
   <div class="loading-bar"><div class="loading-bar-inner"></div></div>
 </div>
@@ -362,12 +362,25 @@ body.admin-mode .admin-only-block{display:block}
 
   <!-- STANDINGS -->
   <div id="tab-standings" class="tab-pane">
+    <!-- BANNED PLAYERS SECTION -->
+    <div style="background:rgba(226,75,74,0.05);border:1px solid rgba(226,75,74,0.25);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+        <h4 style="font-size:11px;font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;color:#E24B4A;display:flex;align-items:center;gap:8px"><i class="ti ti-user-off"></i> BANNED PLAYERS — POINT PENALTY</h4>
+        <button class="primary-btn admin-only" onclick="openBanPlayer()" style="background:#E24B4A;font-size:12px;padding:6px 14px"><i class="ti ti-plus"></i> Ban Player</button>
+      </div>
+      <div id="banned-players-list">
+        <div class="empty-state" style="padding:1rem;font-size:12px">No banned players. Teams with banned players receive 0 points for that match.</div>
+      </div>
+    </div>
     <div class="two-col">
       <div>
-        <p class="section-title">Team Standings</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+          <p class="section-title" style="margin:0">Team Standings</p>
+          <button class="ghost-btn admin-only" onclick="openEditStandings()" style="font-size:12px;padding:6px 12px"><i class="ti ti-pencil"></i> Edit Points</button>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Rank</th><th>Team</th><th>W</th><th>L</th><th>Win%</th><th>K</th><th>D</th><th>K/D</th><th>Pts</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Team</th><th>W</th><th>L</th><th>Win%</th><th>K</th><th>D</th><th>K/D</th><th>Pts</th><th>Adj</th></tr></thead>
             <tbody id="standings-body"></tbody>
           </table>
         </div>
@@ -583,6 +596,28 @@ body.admin-mode .admin-only-block{display:block}
   </div>
 </div>
 
+<!-- BAN PLAYER MODAL -->
+<div class="modal-overlay" id="ban-player-modal">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 style="color:#E24B4A"><i class="ti ti-user-off"></i> Ban Player</h3><button class="close-btn" onclick="closeModal('ban-player-modal')"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label>Team</label><select id="ban-team-sel" onchange="populateBanPlayerSel()"></select></div>
+    <div class="form-group"><label>Player</label><select id="ban-player-sel"></select></div>
+    <div class="form-group"><label>Banned In Match #</label><select id="ban-match-sel"></select></div>
+    <div class="form-group"><label>Reason</label><textarea id="ban-reason" rows="3" placeholder="Reason for ban..."></textarea></div>
+    <div class="modal-actions"><div></div><div class="right"><button class="ghost-btn" onclick="closeModal('ban-player-modal')">Cancel</button><button class="primary-btn" style="background:#E24B4A" onclick="saveBanPlayer()"><i class="ti ti-user-off"></i> Ban</button></div></div>
+  </div>
+</div>
+
+<!-- EDIT STANDINGS MODAL -->
+<div class="modal-overlay" id="edit-standings-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h3><i class="ti ti-pencil" style="color:var(--orange)"></i> Edit Team Points</h3><button class="close-btn" onclick="closeModal('edit-standings-modal')"><i class="ti ti-x"></i></button></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:1rem">Manually adjust points for each team. These are added on top of calculated match points (3 per win). Use negative values to deduct.</p>
+    <div id="edit-standings-rows"></div>
+    <div class="modal-actions"><div></div><div class="right"><button class="ghost-btn" onclick="closeModal('edit-standings-modal')">Cancel</button><button class="primary-btn" onclick="saveStandingsAdj()">Save Adjustments</button></div></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="notice-modal">
   <div class="modal modal-sm">
     <div class="modal-header"><h3>Add Notice</h3><button class="close-btn" onclick="closeModal('notice-modal')"><i class="ti ti-x"></i></button></div>
@@ -706,34 +741,26 @@ const WEAPON_LABELS={ASSAULT:'⚔️ Assault',SMG:'⚡ SMG',LMG:'🔥 LMG',SNIPE
 
 function defaultState() {
   return {
-    settings:{name:'Search & Destroy Tournament',season:'S&D Tournament · 2025',mode:'Search & Destroy',status:'Open',date:'',org:'S&D Tournament Manager',adminPass:'admin1234'},
+    settings:{name:'COD Mobile Tournament',season:'Season 1 · 2025',mode:'Search & Destroy',status:'Open',date:'',org:'',adminPass:'admin1234'},
     maps:[...MAPS_DEFAULT],
     teams:[
-      {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:'',youtube:'',players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:'',youtube:'',players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
-      {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:'',youtube:'',players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
+      {name:'Ghost Ops',tag:'GHO',color:'#E8730A',facebook:'',youtube:'',players:[{name:'ShadowX',role:'IGL',weapon:'ASSAULT'},{name:'NightFury',role:'ATK',weapon:'SMG'},{name:'Phantom',role:'ATK',weapon:'ASSAULT'},{name:'Reaper77',role:'DEF',weapon:'SNIPER'},{name:'SpectrumK',role:'SUP',weapon:'LMG'}]},
+      {name:'Iron Wolves',tag:'IWL',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'WolfBane',role:'IGL',weapon:'ASSAULT'},{name:'IronFang',role:'ATK',weapon:'SMG'},{name:'CruelByte',role:'ATK',weapon:'ASSAULT'},{name:'SteelClaw',role:'DEF',weapon:'SNIPER'},{name:'PackLeader',role:'SUP',weapon:'LMG'}]},
+      {name:'Neon Reapers',tag:'NRX',color:'#378ADD',facebook:'',youtube:'',players:[{name:'NeonSlash',role:'IGL',weapon:'SMG'},{name:'PixelGod',role:'ATK',weapon:'ASSAULT'},{name:'FlashKill',role:'ATK',weapon:'SMG'},{name:'MirrorX',role:'DEF',weapon:'SNIPER'},{name:'CircuitBrk',role:'SUP',weapon:'LMG'}]},
+      {name:'Desert Hawks',tag:'DHK',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Talon99',role:'IGL',weapon:'ASSAULT'},{name:'DustDevil',role:'ATK',weapon:'SMG'},{name:'SandStorm',role:'ATK',weapon:'ASSAULT'},{name:'RaptorEye',role:'DEF',weapon:'SNIPER'},{name:'OasisDrop',role:'SUP',weapon:'LMG'}]},
+      {name:'Frost Squad',tag:'FSQ',color:'#D4537E',facebook:'',youtube:'',players:[{name:'IceBreaker',role:'IGL',weapon:'SMG'},{name:'FrostBolt',role:'ATK',weapon:'ASSAULT'},{name:'Glacial',role:'ATK',weapon:'SMG'},{name:'ArcticFox',role:'DEF',weapon:'SNIPER'},{name:'SnowDrift',role:'SUP',weapon:'LMG'}]},
     ],
-    matches:[
-      {id:1,t1:0,t2:1,s1:null,s2:null,status:"pending",map:"Highrise",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:2,t1:0,t2:2,s1:null,s2:null,status:"pending",map:"Raid",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:3,t1:0,t2:3,s1:null,s2:null,status:"pending",map:"Nuketown",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:4,t1:0,t2:4,s1:null,s2:null,status:"pending",map:"Rust",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:5,t1:1,t2:2,s1:null,s2:null,status:"pending",map:"Shipment",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:6,t1:1,t2:3,s1:null,s2:null,status:"pending",map:"Hackney Yard",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:7,t1:1,t2:4,s1:null,s2:null,status:"pending",map:"Standoff",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:8,t1:2,t2:3,s1:null,s2:null,status:"pending",map:"Highrise",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:9,t1:2,t2:4,s1:null,s2:null,status:"pending",map:"Raid",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-      {id:10,t1:3,t2:4,s1:null,s2:null,status:"pending",map:"Nuketown",round:"Group Stage",date:"",time:"",playerStats:{t1:[],t2:[]}},
-    ],
+    matches:[],
     knockout:{
       q1:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
       elim:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
       q2:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
       final:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},
     },
-    notices:[]
+    notices:[],
+    bannedPlayers:[],
+    pointAdjustments:{},
+    pointAdjReasons:{}
   };
 }
 
@@ -748,39 +775,16 @@ async function init() {
   try {
     const data = await dbGet();
     if (data && data.settings) {
-      // DB has data — trust it fully (admin edits are preserved)
       S = data;
       if (!S.knockout) S.knockout={q1:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},elim:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},q2:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'},final:{t1:-1,t2:-1,s1:null,s2:null,status:'pending'}};
       if (!S.notices) S.notices=[];
+      if (!S.bannedPlayers) S.bannedPlayers=[];
+      if (!S.pointAdjustments) S.pointAdjustments={};
+      if (!S.pointAdjReasons) S.pointAdjReasons={};
       if (!S.settings.adminPass) S.settings.adminPass='admin1234';
-      // Only fix if DB still has the OLD placeholder teams (Ghost Ops, Iron Wolves, etc.)
-      const isOldData = S.teams && S.teams[0] && (S.teams[0].name==='Ghost Ops'||S.teams[0].tag==='GHO'||S.teams.length<5);
-      if(isOldData){
-        S.teams=[
-          {name:'Alpha Squad',tag:'T1A',color:'#E8730A',facebook:'',youtube:'',players:[{name:'Prime Master',role:'IGL',weapon:'ASSAULT'},{name:'Hulk',role:'ATK',weapon:'ASSAULT'},{name:'Hasan',role:'ATK',weapon:'ASSAULT'},{name:'Salu',role:'DEF',weapon:'ASSAULT'},{name:'Tasfiq',role:'SUP',weapon:'ASSAULT'}]},
-          {name:'Bravo Unit',tag:'T2B',color:'#E24B4A',facebook:'',youtube:'',players:[{name:'Toxic King',role:'IGL',weapon:'ASSAULT'},{name:'Junayed',role:'ATK',weapon:'ASSAULT'},{name:'Matrix',role:'ATK',weapon:'ASSAULT'},{name:'Kungfu Panda',role:'DEF',weapon:'ASSAULT'},{name:'Mushfiq',role:'SUP',weapon:'ASSAULT'}]},
-          {name:'Charlie Force',tag:'T3C',color:'#378ADD',facebook:'',youtube:'',players:[{name:'Master Mind',role:'IGL',weapon:'ASSAULT'},{name:'Thor',role:'ATK',weapon:'ASSAULT'},{name:'Joint',role:'ATK',weapon:'ASSAULT'},{name:'Blood Vane',role:'DEF',weapon:'ASSAULT'},{name:'Nehal',role:'SUP',weapon:'ASSAULT'}]},
-          {name:'Delta Recon',tag:'T4D',color:'#1D9E75',facebook:'',youtube:'',players:[{name:'Fatman',role:'IGL',weapon:'ASSAULT'},{name:'Fakrul',role:'ATK',weapon:'ASSAULT'},{name:'Samurai',role:'ATK',weapon:'ASSAULT'},{name:'Hex Blaze',role:'DEF',weapon:'ASSAULT'},{name:'Tanjib',role:'SUP',weapon:'ASSAULT'}]},
-          {name:'Echo Strike',tag:'T5E',color:'#D4537E',facebook:'',youtube:'',players:[{name:'Oi Rabot',role:'IGL',weapon:'ASSAULT'},{name:'Emon',role:'ATK',weapon:'ASSAULT'},{name:'Sabbir',role:'ATK',weapon:'ASSAULT'},{name:'Blackops',role:'DEF',weapon:'ASSAULT'},{name:'Sajid',role:'SUP',weapon:'ASSAULT'}]},
-        ];
-        if(!S.matches||S.matches.length===0){
-          S.matches=[
-            {id:1,t1:0,t2:1,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:2,t1:0,t2:2,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:3,t1:0,t2:3,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:4,t1:0,t2:4,s1:null,s2:null,status:'pending',map:'Rust',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:5,t1:1,t2:2,s1:null,s2:null,status:'pending',map:'Shipment',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:6,t1:1,t2:3,s1:null,s2:null,status:'pending',map:'Hackney Yard',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:7,t1:1,t2:4,s1:null,s2:null,status:'pending',map:'Standoff',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:8,t1:2,t2:3,s1:null,s2:null,status:'pending',map:'Highrise',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:9,t1:2,t2:4,s1:null,s2:null,status:'pending',map:'Raid',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-            {id:10,t1:3,t2:4,s1:null,s2:null,status:'pending',map:'Nuketown',round:'Group Stage',date:'',time:'',playerStats:{t1:[],t2:[]}},
-          ];
-        }
-        await dbSet(S);
-      }
     } else {
-      // No DB data yet — push defaultState (correct teams already in defaultState)
+      // First time — load your real tournament data
+      S = {"maps":["Firing Range"],"teams":[{"tag":"T1A","name":"Alpha Squad","color":"#E8730A","players":[{"name":"Prime Master","role":"IGL","weapon":"ASSAULT"},{"name":"Hulk","role":"ATK","weapon":"ASSAULT"},{"name":"Hasan","role":"ATK","weapon":"ASSAULT"},{"name":"Salu","role":"DEF","weapon":"ASSAULT"},{"name":"Tasfiq","role":"SUP","weapon":"ASSAULT"}],"youtube":"","facebook":""},{"tag":"T2B","name":"Bravo Unit","color":"#E24B4A","players":[{"name":"Toxic King","role":"IGL","weapon":"ASSAULT"},{"name":"Junayed","role":"ATK","weapon":"ASSAULT"},{"name":"Matrix","role":"ATK","weapon":"ASSAULT"},{"name":"Kungfu Panda","role":"DEF","weapon":"ASSAULT"},{"name":"Mushfiq","role":"SUP","weapon":"ASSAULT"}],"youtube":"","facebook":""},{"tag":"T3C","name":"Charlie Force","color":"#378ADD","players":[{"name":"Master Mind","role":"IGL","weapon":"ASSAULT"},{"name":"Thor","role":"ATK","weapon":"ASSAULT"},{"name":"Joint","role":"ATK","weapon":"ASSAULT"},{"name":"Blood Vane","role":"DEF","weapon":"ASSAULT"},{"name":"Nehal","role":"SUP","weapon":"ASSAULT"}],"youtube":"","facebook":""},{"tag":"T4D","name":"Delta Recon","color":"#E8730A","players":[{"name":"R.Joker","role":"IGL","weapon":"ASSAULT"},{"name":"Fakrul","role":"ATK","weapon":"ASSAULT"},{"name":"Samurai","role":"ATK","weapon":"ASSAULT"},{"name":"Hex Blaze","role":"DEF","weapon":"ASSAULT"},{"name":"Tanjib","role":"SUP","weapon":"ASSAULT"}],"youtube":"","facebook":""},{"tag":"T5E","name":"Echo Strike","color":"#D4537E","players":[{"name":"Oi Rabot","role":"IGL","weapon":"ASSAULT"},{"name":"Emon","role":"ATK","weapon":"ASSAULT"},{"name":"Sabbir","role":"ATK","weapon":"ASSAULT"},{"name":"Blackops","role":"DEF","weapon":"ASSAULT"},{"name":"Sajid","role":"SUP","weapon":"ASSAULT"}],"youtube":"","facebook":""}],"matches":[{"id":1,"s1":0,"s2":0,"t1":0,"t2":1,"map":"Firing Range","date":"June 18","time":"9:30 pm","round":"Group Stage","status":"done","playerStats":{"t1":[{"name":"Prime Master","kills":4,"deaths":5,"assists":0},{"name":"Hulk","kills":0,"deaths":0,"assists":0},{"name":"Hasan","kills":1,"deaths":5,"assists":0},{"name":"Salu","kills":0,"deaths":0,"assists":0},{"name":"Tasfiq","kills":2,"deaths":5,"assists":0}],"t2":[{"name":"Toxic King","kills":6,"deaths":0,"assists":0},{"name":"Junayed","kills":5,"deaths":3,"assists":0},{"name":"Matrix","kills":2,"deaths":1,"assists":1},{"name":"Kungfu Panda","kills":2,"deaths":3,"assists":0},{"name":"Mushfiq","kills":0,"deaths":0,"assists":0}]}},{"id":2,"s1":null,"s2":null,"t1":0,"t2":2,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":3,"s1":null,"s2":null,"t1":0,"t2":3,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":4,"s1":null,"s2":null,"t1":0,"t2":4,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":5,"s1":null,"s2":null,"t1":1,"t2":2,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":6,"s1":null,"s2":null,"t1":1,"t2":3,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":7,"s1":null,"s2":null,"t1":1,"t2":4,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":8,"s1":null,"s2":null,"t1":2,"t2":3,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":9,"s1":null,"s2":null,"t1":2,"t2":4,"map":"Firing Range","date":"","time":"","round":"Group Stage","status":"pending","playerStats":{"t1":[],"t2":[]}},{"id":10,"s1":3,"s2":0,"t1":3,"t2":4,"map":"Firing Range","date":"June 18 ","time":"10:00 pm","round":"Group Stage","status":"done","playerStats":{"t1":[{"name":"R.Joker","kills":0,"deaths":0,"assists":0},{"name":"Fakrul","kills":4,"deaths":5,"assists":0},{"name":"Samurai","kills":6,"deaths":6,"assists":0},{"name":"Hex Blaze","kills":4,"deaths":4,"assists":0},{"name":"Tanjib","kills":10,"deaths":3,"assists":0}],"t2":[{"name":"Oi Rabot","kills":0,"deaths":0,"assists":0},{"name":"Emon","kills":3,"deaths":6,"assists":0},{"name":"Sabbir","kills":0,"deaths":0,"assists":0},{"name":"Blackops","kills":5,"deaths":6,"assists":0},{"name":"Sajid","kills":0,"deaths":0,"assists":0}]}}],"notices":[{"id":1781297154504,"date":"Jun 13, 2026, 02:45 AM","text":"We all with utmost coordination decided that  ~The Tournament Entry Fee Atleast 50 Tk - Person~ . If anyone want to provide some extra remuneration or donation we will welcome them with cordial thanks","title":"Pay","category":"info"},{"id":1781297186559,"date":"Jun 13, 2026, 02:46 AM","text":") If any one or any team violate the rules or use any of the ban items the team will be disqualified for the specific match\n\n2) Toxic And Rude Behaviour will be not tolerated in the tournament and player will face Ban For 1 Match . If 2 or more members are involved in the case the team will be  banned from the tournament. ( In game Text Must be off during matchtime in cross / all chat but team chat is allowed)\n \n3) Slang And meaningful words about personal life and family are completely prohibited and banned  There will be no mercy for the whole if this happens .\n\n* If anyone have any queries or obligations about any segment or have any personal opinion plz kindly contact","title":"Bann Notice","category":"banned"},{"id":1781725084318,"date":"Jun 18, 2026, 01:38 AM","text":"Underkill and Restock has been banned","title":"Banned ITEM","category":"warn"}],"knockout":{"q1":{"s1":null,"s2":null,"t1":-1,"t2":-1,"status":"pending"},"q2":{"s1":null,"s2":null,"t1":-1,"t2":-1,"status":"pending"},"elim":{"s1":null,"s2":null,"t1":-1,"t2":-1,"status":"pending"},"final":{"s1":null,"s2":null,"t1":-1,"t2":-1,"status":"pending"}},"settings":{"org":"","date":"20 June 2026","mode":"Search & Destroy","name":"Search & Destroy Tournament","season":"S&D Tournament · 2025","status":"Open","adminPass":"argentina2022"},"bannedPlayers":[],"pointAdjustments":{},"pointAdjReasons":{}};
       await dbSet(S);
     }
     setSyncOnline();
@@ -920,7 +924,7 @@ function openAddTeam(){
   document.getElementById('m-youtube').value='';
   document.getElementById('delete-team-btn').style.display='none';
   renderColorPicker(COLORS[S.teams.length%COLORS.length]);
-  renderPlayerInputs([{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'IGL',weapon:'ASSAULT'}]);
+  renderPlayerInputs([{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'ATK',weapon:'SMG'},{name:'',role:'DEF',weapon:'SNIPER'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'IGL',weapon:'SMG'}]);
   document.getElementById('team-modal').classList.add('open');
 }
 function openEditTeam(idx){
@@ -1161,35 +1165,58 @@ async function saveScore(){
 //  STANDINGS
 // ══════════════════════════════════════════
 function getStandingsRows(){
-  const rows=S.teams.map((t,i)=>({i,name:t.name,tag:t.tag,color:t.color,w:0,l:0,kills:0,deaths:0}));
-  S.matches.forEach(m=>{
+  const adj=S.pointAdjustments||{};
+  const rows=S.teams.map((t,i)=>({i,name:t.name,tag:t.tag,color:t.color,w:0,l:0,kills:0,deaths:0,bannedPts:0,adjPts:parseInt(adj[i])||0}));
+  S.matches.forEach((m,mi)=>{
     if(m.status==='done'&&m.s1!=null){
       const won1=m.s1>m.s2;
+      const t1Banned=isTeamBannedInMatch(m.t1,mi);
+      const t2Banned=m.t2>=0&&isTeamBannedInMatch(m.t2,mi);
       if(m.playerStats){
         (m.playerStats.t1||[]).forEach(p=>{rows[m.t1].kills+=p.kills||0;rows[m.t1].deaths+=p.deaths||0;});
         if(m.t2>=0)(m.playerStats.t2||[]).forEach(p=>{rows[m.t2].kills+=p.kills||0;rows[m.t2].deaths+=p.deaths||0;});
       }
-      if(won1){rows[m.t1].w++;if(m.t2>=0)rows[m.t2].l++;}
-      else{if(m.t2>=0)rows[m.t2].w++;rows[m.t1].l++;}
+      // win/loss as normal but banned team gets 0 pts
+      if(won1){
+        if(!t1Banned) rows[m.t1].w++;
+        else { rows[m.t1].bannedPts+=3; } // track forfeited pts
+        if(m.t2>=0) rows[m.t2].l++;
+      } else {
+        if(m.t2>=0&&!t2Banned) rows[m.t2].w++;
+        else if(m.t2>=0) rows[m.t2].bannedPts+=3;
+        rows[m.t1].l++;
+      }
     }
   });
-  rows.sort((a,b)=>b.w-a.w||a.l-b.l||(b.kills-b.deaths)-(a.kills-a.deaths));
+  rows.forEach(r=>{r.pts=r.w*3+r.adjPts;});
+  rows.sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||(b.kills-b.deaths)-(a.kills-a.deaths));
   return rows;
 }
 function renderStandings(){
+  renderBannedPlayers();
   const rows=getStandingsRows();
+  const adjReasons=S.pointAdjReasons||{};
   document.getElementById('standings-body').innerHTML=rows.map((r,rank)=>{
     const pct=r.w+r.l>0?Math.round(r.w/(r.w+r.l)*100)+'%':'—';
     const kd=r.deaths>0?(r.kills/r.deaths).toFixed(2):r.kills.toFixed(2);
     const rc=rank===0?'rank-1':rank===1?'rank-2':rank===2?'rank-3':'rank-other';
+    const hasBan=(S.bannedPlayers||[]).some(b=>b.teamIdx===r.i);
+    const adjLabel=r.adjPts!==0?`<span style="font-size:9px;font-family:var(--mono);color:${r.adjPts>0?'var(--success)':'#E24B4A'};margin-left:4px" title="${adjReasons[r.i]||''}">(${r.adjPts>0?'+':''}${r.adjPts})</span>`:'';
+    const banIcon=hasBan?`<span title="Has banned player(s)" style="color:#E24B4A;font-size:12px;margin-left:4px"><i class="ti ti-user-off"></i></span>`:'';
     return `<tr>
       <td><span class="rank-badge ${rc}">${rank+1}</span></td>
-      <td style="font-weight:600"><span style="display:inline-block;padding:2px 6px;background:${BG(r.color)};color:${r.color};font-family:var(--mono);font-size:10px;border-radius:3px;margin-right:7px">${r.tag}</span>${r.name}</td>
-      <td style="color:#1D9E75;font-weight:700">${r.w}</td><td style="color:#E24B4A">${r.l}</td>
+      <td style="font-weight:600">
+        <span style="display:inline-block;padding:2px 6px;background:${BG(r.color)};color:${r.color};font-family:var(--mono);font-size:10px;border-radius:3px;margin-right:7px">${r.tag}</span>
+        ${r.name}${banIcon}
+      </td>
+      <td style="color:#1D9E75;font-weight:700">${r.w}</td>
+      <td style="color:#E24B4A">${r.l}</td>
       <td style="font-family:var(--mono);color:var(--muted)">${pct}</td>
-      <td style="font-family:var(--mono)">${r.kills}</td><td style="font-family:var(--mono);color:var(--muted)">${r.deaths}</td>
+      <td style="font-family:var(--mono)">${r.kills}</td>
+      <td style="font-family:var(--mono);color:var(--muted)">${r.deaths}</td>
       <td style="font-family:var(--mono);color:var(--info)">${kd}</td>
-      <td style="font-family:var(--mono);font-weight:700;color:var(--orange)">${r.w*3}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:var(--orange)">${r.pts}${adjLabel}</td>
+      <td style="font-size:11px;font-family:var(--mono);color:var(--muted)">${r.adjPts!==0?(adjReasons[r.i]||'Manual adj'):'—'}</td>
     </tr>`;
   }).join('');
 }
@@ -1507,6 +1534,115 @@ function startBgCanvas(){
     requestAnimationFrame(animate);
   }
   animate();
+}
+
+// ══════════════════════════════════════════
+//  BANNED PLAYERS
+// ══════════════════════════════════════════
+function openBanPlayer(){
+  // populate team select
+  const tsel=document.getElementById('ban-team-sel');
+  tsel.innerHTML=S.teams.map((t,i)=>`<option value="${i}">${t.name} [${t.tag}]</option>`).join('');
+  populateBanPlayerSel();
+  // populate match select
+  const msel=document.getElementById('ban-match-sel');
+  msel.innerHTML='<option value="-1">— All Matches (Global Ban) —</option>'+
+    S.matches.map((m,i)=>{
+      const t1=S.teams[m.t1]?.name||'TBD', t2=S.teams[m.t2]?.name||'TBD';
+      return `<option value="${i}">Match #${i+1}: ${t1} vs ${t2}</option>`;
+    }).join('');
+  document.getElementById('ban-reason').value='';
+  document.getElementById('ban-player-modal').classList.add('open');
+}
+function populateBanPlayerSel(){
+  const ti=parseInt(document.getElementById('ban-team-sel').value);
+  const t=S.teams[ti];
+  document.getElementById('ban-player-sel').innerHTML=
+    (t?t.players.filter(p=>p.name):[] ).map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+}
+async function saveBanPlayer(){
+  const ti=parseInt(document.getElementById('ban-team-sel').value);
+  const pname=document.getElementById('ban-player-sel').value;
+  const mi=parseInt(document.getElementById('ban-match-sel').value);
+  const reason=document.getElementById('ban-reason').value.trim();
+  if(!pname){toast('Select a player');return;}
+  if(!S.bannedPlayers) S.bannedPlayers=[];
+  S.bannedPlayers.push({
+    id:Date.now(), teamIdx:ti, playerName:pname,
+    matchIdx:mi, reason, date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})
+  });
+  await saveState();
+  renderBannedPlayers();renderStandings();
+  closeModal('ban-player-modal');toast('Player banned!');
+}
+async function removeBan(id){
+  if(!confirm('Remove this ban?')) return;
+  S.bannedPlayers=(S.bannedPlayers||[]).filter(b=>b.id!==id);
+  await saveState();renderBannedPlayers();renderStandings();toast('Ban removed');
+}
+function renderBannedPlayers(){
+  const el=document.getElementById('banned-players-list');
+  if(!el) return;
+  const bans=S.bannedPlayers||[];
+  if(!bans.length){
+    el.innerHTML='<div class="empty-state" style="padding:1rem;font-size:12px">No banned players. Teams with banned players receive 0 points for that match.</div>';
+    return;
+  }
+  el.innerHTML=bans.map(b=>{
+    const t=S.teams[b.teamIdx];
+    const matchLabel=b.matchIdx>=0&&S.matches[b.matchIdx]?
+      `Match #${b.matchIdx+1} (${S.teams[S.matches[b.matchIdx].t1]?.name||'?'} vs ${S.teams[S.matches[b.matchIdx].t2]?.name||'?'})`:
+      'All Matches';
+    const delBtn=IS_ADMIN?`<button class="notice-delete" onclick="removeBan(${b.id})" title="Remove Ban"><i class="ti ti-x"></i></button>`:'';
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:.7rem 1rem;border-bottom:1px solid rgba(226,75,74,0.15)">
+      <div style="width:32px;height:32px;border-radius:6px;background:rgba(226,75,74,0.15);color:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-user-off"></i></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">${b.playerName} <span style="font-size:10px;font-family:var(--mono);padding:1px 6px;border-radius:2px;background:${BG(t?.color||'#888')};color:${t?.color||'#888'}">${t?.tag||'?'}</span></div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px">${matchLabel} · ${b.date}</div>
+        ${b.reason?`<div style="font-size:12px;color:#E24B4A;margin-top:3px;font-style:italic">"${b.reason}"</div>`:''}
+        <div style="font-size:10px;color:var(--muted2);margin-top:2px;font-family:var(--mono)">⚠️ Team gets 0 pts for ${b.matchIdx>=0?'this match':'all matches'}</div>
+      </div>
+      ${delBtn}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  EDIT STANDINGS (manual point adjustment)
+// ══════════════════════════════════════════
+function openEditStandings(){
+  if(!S.pointAdjustments) S.pointAdjustments={};
+  document.getElementById('edit-standings-rows').innerHTML=S.teams.map((t,i)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:.75rem 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">${t.name}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--muted)">[${t.tag}]</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:200px">
+        <label style="font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:1px">POINT ADJUSTMENT (+ or -)</label>
+        <input type="number" id="adj-pts-${i}" value="${S.pointAdjustments[i]||0}" style="width:100px;text-align:center">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:220px">
+        <label style="font-size:9px;font-family:var(--mono);color:var(--muted);letter-spacing:1px">REASON (optional)</label>
+        <input type="text" id="adj-reason-${i}" value="${S.pointAdjReasons?.[i]||''}" placeholder="e.g. Penalty, Bonus..." style="font-size:12px">
+      </div>
+    </div>`).join('');
+  document.getElementById('edit-standings-modal').classList.add('open');
+}
+async function saveStandingsAdj(){
+  if(!S.pointAdjustments) S.pointAdjustments={};
+  if(!S.pointAdjReasons) S.pointAdjReasons={};
+  S.teams.forEach((_,i)=>{
+    S.pointAdjustments[i]=parseInt(document.getElementById(`adj-pts-${i}`)?.value)||0;
+    S.pointAdjReasons[i]=document.getElementById(`adj-reason-${i}`)?.value||'';
+  });
+  await saveState();renderStandings();closeModal('edit-standings-modal');toast('Points updated!');
+}
+
+// Helper: check if a team is banned in a specific match
+function isTeamBannedInMatch(teamIdx, matchIdx){
+  const bans=S.bannedPlayers||[];
+  return bans.some(b=>b.teamIdx===teamIdx&&(b.matchIdx===matchIdx||b.matchIdx===-1));
 }
 
 // ══════════════════════════════════════════
