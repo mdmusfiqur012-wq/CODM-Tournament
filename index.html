@@ -380,7 +380,7 @@ body.admin-mode .admin-only-block{display:block}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Rank</th><th>Team</th><th>W</th><th>L</th><th>Win%</th><th>K</th><th>D</th><th>K/D</th><th>Pts</th><th>Adj</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>Win%</th><th>K</th><th>D</th><th>K/D</th><th>Pts</th><th>Adj</th></tr></thead>
             <tbody id="standings-body"></tbody>
           </table>
         </div>
@@ -1162,29 +1162,51 @@ async function saveScore(){
 }
 
 // ══════════════════════════════════════════
-//  STANDINGS
+//  STANDINGS  (FIXED: banned-team matches now correctly
+//  count as a loss for the banned team AND a win for the
+//  opponent, in every score scenario — so Played/W/L totals
+//  always match the number of completed matches.)
 // ══════════════════════════════════════════
 function getStandingsRows(){
   const adj=S.pointAdjustments||{};
-  const rows=S.teams.map((t,i)=>({i,name:t.name,tag:t.tag,color:t.color,w:0,l:0,kills:0,deaths:0,bannedPts:0,adjPts:parseInt(adj[i])||0}));
+  const rows=S.teams.map((t,i)=>({i,name:t.name,tag:t.tag,color:t.color,p:0,w:0,l:0,kills:0,deaths:0,bannedPts:0,adjPts:parseInt(adj[i])||0}));
   S.matches.forEach((m,mi)=>{
     if(m.status==='done'&&m.s1!=null){
       const won1=m.s1>m.s2;
       const t1Banned=isTeamBannedInMatch(m.t1,mi);
       const t2Banned=m.t2>=0&&isTeamBannedInMatch(m.t2,mi);
+
+      // count played for both sides of a real match (BYE/-1 excluded)
+      rows[m.t1].p++;
+      if(m.t2>=0) rows[m.t2].p++;
+
       if(m.playerStats){
         (m.playerStats.t1||[]).forEach(p=>{rows[m.t1].kills+=p.kills||0;rows[m.t1].deaths+=p.deaths||0;});
         if(m.t2>=0)(m.playerStats.t2||[]).forEach(p=>{rows[m.t2].kills+=p.kills||0;rows[m.t2].deaths+=p.deaths||0;});
       }
-      // win/loss as normal but banned team gets 0 pts
-      if(won1){
-        if(!t1Banned) rows[m.t1].w++;
-        else { rows[m.t1].bannedPts+=3; } // track forfeited pts
-        if(m.t2>=0) rows[m.t2].l++;
-      } else {
-        if(m.t2>=0&&!t2Banned) rows[m.t2].w++;
-        else if(m.t2>=0) rows[m.t2].bannedPts+=3;
+
+      if(t1Banned&&t2Banned){
+        // both banned: both lose this match, nobody gets the win
         rows[m.t1].l++;
+        if(m.t2>=0) rows[m.t2].l++;
+      } else if(t1Banned){
+        // T1 banned: always a loss for T1, always a win for T2 — regardless of scoreboard
+        rows[m.t1].l++;
+        rows[m.t1].bannedPts+=3;
+        if(m.t2>=0) rows[m.t2].w++;
+      } else if(t2Banned){
+        // T2 banned: always a loss for T2, always a win for T1 — regardless of scoreboard
+        if(m.t2>=0){rows[m.t2].l++;rows[m.t2].bannedPts+=3;}
+        rows[m.t1].w++;
+      } else {
+        // normal match: scoreboard decides win/loss
+        if(won1){
+          rows[m.t1].w++;
+          if(m.t2>=0) rows[m.t2].l++;
+        } else {
+          if(m.t2>=0) rows[m.t2].w++;
+          rows[m.t1].l++;
+        }
       }
     }
   });
@@ -1209,6 +1231,7 @@ function renderStandings(){
         <span style="display:inline-block;padding:2px 6px;background:${BG(r.color)};color:${r.color};font-family:var(--mono);font-size:10px;border-radius:3px;margin-right:7px">${r.tag}</span>
         ${r.name}${banIcon}
       </td>
+      <td style="font-family:var(--mono);color:var(--muted)">${r.p}</td>
       <td style="color:#1D9E75;font-weight:700">${r.w}</td>
       <td style="color:#E24B4A">${r.l}</td>
       <td style="font-family:var(--mono);color:var(--muted)">${pct}</td>
