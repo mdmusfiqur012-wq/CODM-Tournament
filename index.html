@@ -39,19 +39,33 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .portal{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem}
 .portal-header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);position:relative}
 .portal-header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);box-shadow:0 0 20px var(--orange)}
-/* ── HERO BANNER MODE ── */
+/* ── HERO BANNER MODE ──
+   The banner image is treated as a complete, self-contained graphic
+   (it already has its own title/branding baked in), so we hide the
+   site's own text overlay and just frame the image cleanly. */
 .portal-header.has-banner{
-  margin:-2rem -1.5rem 2.5rem;padding:3.5rem 1.5rem 2.25rem;border-bottom:1px solid var(--glass-border);
-  border-radius:0 0 20px 20px;overflow:hidden;background-size:cover;background-position:center;
-  background-color:var(--surface);
+  margin:-2rem -1.5rem 1.5rem;padding:0;border-bottom:none;
+  border-radius:0 0 20px 20px;overflow:hidden;position:relative;
+  aspect-ratio:1774/887;background-color:var(--surface);
+}
+.portal-header.has-banner .banner-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;
 }
 .portal-header.has-banner::before{
-  content:'';position:absolute;inset:0;z-index:0;
-  background:linear-gradient(180deg,rgba(10,11,13,0.35) 0%,rgba(10,11,13,0.55) 45%,rgba(10,11,13,0.94) 100%),
-             radial-gradient(circle at 50% 0%,rgba(232,115,10,0.18),transparent 60%);
+  content:'';position:absolute;left:0;right:0;bottom:0;height:35%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(10,11,13,0.85) 100%);
 }
 .portal-header.has-banner::after{display:none}
-.portal-header.has-banner>*{position:relative;z-index:1}
+.portal-header.has-banner>.badge-pill,
+.portal-header.has-banner>h1,
+.portal-header.has-banner>.sub{display:none}
+.portal-header.has-banner>.admin-badge,
+.portal-header.has-banner>.banner-edit-btn{position:absolute;z-index:3;top:1rem}
+.portal-header.has-banner>.admin-badge{right:1rem}
+.portal-header.has-banner>.banner-edit-btn{left:1rem}
+.portal-header.has-banner>.header-actions{
+  position:absolute;left:0;right:0;bottom:.9rem;z-index:3;margin-top:0;
+}
 .banner-edit-btn{position:absolute;top:1rem;left:1rem;z-index:2;display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);letter-spacing:1px;padding:6px 12px;border-radius:20px;cursor:pointer;background:rgba(0,0,0,0.45);border:1px solid var(--glass-border);color:var(--text);backdrop-filter:blur(8px);transition:all .2s}
 .banner-edit-btn:hover{border-color:var(--orange);color:var(--orange)}
 .badge-pill{display:inline-block;font-size:11px;font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;color:var(--orange);border:1px solid var(--orange);padding:3px 14px;border-radius:2px;margin-bottom:12px;box-shadow:0 0 12px rgba(232,115,10,0.3),inset 0 0 8px rgba(232,115,10,0.05);animation:badgePulse 3s ease-in-out infinite}
@@ -442,7 +456,7 @@ body.admin-mode .admin-only-block{display:block}
   .stat-card{padding:.7rem .4rem;border-radius:10px}
   .stat-card .val{font-size:19px}
   .stat-card .lbl{font-size:8px;letter-spacing:1px}
-  .portal-header.has-banner{margin:-1rem -.85rem 1.5rem;padding:4.25rem 1rem 1.5rem;border-radius:0 0 16px 16px}
+  .portal-header.has-banner{margin:-1rem -.85rem 1.5rem;border-radius:0 0 16px 16px}
   .banner-edit-btn{top:.75rem;left:.75rem;font-size:10px;padding:5px 10px}
 
   /* ── sticky navbar: tighter on mobile ── */
@@ -550,6 +564,7 @@ body.admin-mode .admin-only-block{display:block}
 <div class="portal" id="main-portal" style="display:none">
 
   <div class="portal-header" id="portal-header">
+    <img class="banner-img" id="banner-img" src="" alt="" style="display:none">
     <button class="banner-edit-btn admin-only" id="banner-edit-btn" onclick="openBannerEditor()">
       <i class="ti ti-photo"></i> <span>Edit Banner</span>
     </button>
@@ -1310,13 +1325,16 @@ function renderAll(){
 // ══════════════════════════════════════════
 function applyBanner(){
   const header=document.getElementById('portal-header');
+  const img=document.getElementById('banner-img');
   const url=S.settings?.banner||'';
   if(url){
     header.classList.add('has-banner');
-    header.style.backgroundImage=`url("${url}")`;
+    img.src=url;
+    img.style.display='block';
   } else {
     header.classList.remove('has-banner');
-    header.style.backgroundImage='';
+    img.src='';
+    img.style.display='none';
   }
 }
 function openBannerEditor(){
