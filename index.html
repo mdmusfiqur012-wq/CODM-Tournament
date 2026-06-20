@@ -49,9 +49,19 @@ a{color:var(--orange)}
 .stat-card:hover::after{opacity:1}
 .stat-card .val{font-size:26px;font-weight:700;color:var(--orange);font-family:var(--mono);text-shadow:0 0 15px rgba(232,115,10,0.5);position:relative;z-index:1}
 .stat-card .lbl{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;position:relative;z-index:1}
-.tab-bar{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{font-family:var(--font);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:10px 16px;border:none;background:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s,text-shadow .2s;display:flex;align-items:center;gap:5px}
-.tab:hover{color:var(--text)}.tab.active{color:var(--orange);border-bottom-color:var(--orange);text-shadow:0 0 10px rgba(232,115,10,0.5);filter:drop-shadow(0 2px 6px rgba(232,115,10,0.3))}
+.tab-bar-wrap{margin-bottom:2rem;position:relative}
+.tab-bar-label{font-size:9px;font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tab-bar-label::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--orange),transparent)}
+.tab-bar-label::after{content:'';flex:3;height:1px;background:linear-gradient(90deg,transparent,var(--border))}
+.tab-bar{display:flex;gap:8px;padding:10px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow-x:auto;box-shadow:0 0 30px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04);scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:10px 16px;border:1px solid transparent;background:none;cursor:pointer;color:var(--muted);border-radius:8px;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;position:relative;flex-shrink:0}
+.tab i{font-size:15px;transition:color .2s}
+.tab:hover{color:var(--text);background:var(--surface2);border-color:var(--border2)}
+.tab:hover i{color:var(--orange)}
+.tab.active{color:#fff;background:linear-gradient(135deg,rgba(232,115,10,0.25),rgba(232,115,10,0.10));border-color:var(--orange);box-shadow:0 0 16px rgba(232,115,10,0.3),inset 0 0 12px rgba(232,115,10,0.08);text-shadow:0 0 8px rgba(232,115,10,0.4)}
+.tab.active i{color:var(--orange);filter:drop-shadow(0 0 4px rgba(232,115,10,0.6))}
+.tab.active::after{content:'';position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:var(--orange);border-radius:2px;box-shadow:0 0 8px var(--orange)}
 .tab-pane{display:none}.tab-pane.active{display:block}
 .section-title{font-size:11px;font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem;padding-left:10px;border-left:3px solid var(--orange)}
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem}
@@ -402,15 +412,19 @@ body.admin-mode .admin-only-block{display:block}
   </div>
   <!-- ═══════════════════════════════════════════════════════════════ -->
 
-  <div class="tab-bar">
-    <button class="tab active" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
-    <button class="tab" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
-    <button class="tab" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
-    <button class="tab" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
-    <button class="tab" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
-    <button class="tab" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
-    <button class="tab" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
-    <button class="tab admin-only" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
+  <!-- ═══ NAVIGATION ═══ -->
+  <div class="tab-bar-wrap">
+    <div class="tab-bar-label">⚡ EXPLORE PORTAL</div>
+    <div class="tab-bar" role="tablist">
+      <button class="tab active" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
+      <button class="tab" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
+      <button class="tab" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
+      <button class="tab" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
+      <button class="tab" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
+      <button class="tab" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
+      <button class="tab" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
+      <button class="tab admin-only" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
+    </div>
   </div>
 
   <!-- TEAMS -->
@@ -964,6 +978,9 @@ function switchTab(id){
   document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',TAB_ORDER[i]===id);});
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
+  // scroll active tab into view
+  const activeTab=document.querySelector('.tab.active');
+  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   if(id==='standings'){renderStandings();renderKillLeaderboard();}
   if(id==='schedule') renderSchedule();
   if(id==='bracket') renderBracket();
