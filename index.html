@@ -262,13 +262,44 @@ select option{background:var(--surface)}
 .upcoming-item:last-child{border-bottom:none}
 .upcoming-vs{font-size:10px;font-family:var(--mono);color:var(--muted);margin:0 2px}
 .upcoming-time{font-size:10px;font-family:var(--mono);color:var(--warning);background:rgba(239,159,39,0.12);padding:3px 8px;border-radius:4px;white-space:nowrap}
-/* notice mini */
+/* ── REAL-TIME COUNTDOWN ── */
+@keyframes cdDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+@keyframes cdLivePulse{0%,100%{box-shadow:0 0 12px rgba(226,75,74,0.5),inset 0 0 20px rgba(226,75,74,0.05)}50%{box-shadow:0 0 35px rgba(226,75,74,0.9),inset 0 0 40px rgba(226,75,74,0.1)}}
+@keyframes cdPendingPulse{0%,100%{box-shadow:0 0 10px rgba(239,159,39,0.4),inset 0 0 20px rgba(239,159,39,0.04)}50%{box-shadow:0 0 30px rgba(239,159,39,0.8),inset 0 0 40px rgba(239,159,39,0.08)}}
+@keyframes cdSecFlip{0%{transform:translateY(-8px) scale(0.9);opacity:0}40%{transform:translateY(0) scale(1.05);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes cdNumGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+.cd-wrap{display:flex;align-items:center;justify-content:center;padding:1.2rem 0 .8rem;flex-wrap:wrap;gap:0}
+.cd-block{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:90px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:.8rem .5rem;margin:0 3px}
+.cd-num{font-size:58px;font-weight:900;font-family:var(--mono);line-height:1;letter-spacing:-2px;transition:color .3s}
+.cd-num.pending{color:var(--warning);text-shadow:0 0 30px rgba(239,159,39,0.8),0 0 60px rgba(239,159,39,0.3),0 2px 0 rgba(0,0,0,0.5)}
+.cd-num.live{color:var(--danger);text-shadow:0 0 30px rgba(226,75,74,0.9),0 0 60px rgba(226,75,74,0.4),0 2px 0 rgba(0,0,0,0.5);animation:cdNumGlow 1s ease-in-out infinite}
+.cd-num.done{color:var(--success);text-shadow:0 0 25px rgba(29,158,117,0.7)}
+.cd-lbl{font-size:9px;font-family:var(--mono);letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cd-sep{font-size:48px;font-weight:900;font-family:var(--mono);padding:0 2px;margin-bottom:24px;line-height:1;opacity:.5}
+.cd-sep.pending{color:var(--warning);text-shadow:0 0 14px rgba(239,159,39,0.5)}
+.cd-sep.live{color:var(--danger);text-shadow:0 0 14px rgba(226,75,74,0.5)}
+.cd-sec-flash{animation:cdSecFlip .3s ease-out}
+.cd-match-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.cd-team-pill{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:8px 16px}
+.cd-team-pill .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cd-team-name{font-size:15px;font-weight:700}
+.cd-vs{font-size:13px;font-family:var(--mono);color:var(--muted);letter-spacing:3px;font-weight:700}
+.cd-meta{text-align:center;margin-top:10px;font-size:10px;font-family:var(--mono);color:var(--muted2);letter-spacing:1px}
+.cd-status-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-family:var(--mono);font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:24px;margin-bottom:14px}
+.cd-status-badge.pending{background:rgba(239,159,39,0.15);color:var(--warning);border:1.5px solid rgba(239,159,39,0.5);box-shadow:0 0 16px rgba(239,159,39,0.2)}
+.cd-status-badge.live{background:rgba(226,75,74,0.18);color:var(--danger);border:1.5px solid rgba(226,75,74,0.55);animation:cdLivePulse 1.2s ease-in-out infinite}
+.cd-status-badge.done{background:rgba(29,158,117,0.14);color:var(--success);border:1.5px solid rgba(29,158,117,0.4)}
+.cd-no-time{text-align:center;padding:.6rem 1rem;margin-top:8px;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:1px;background:rgba(255,255,255,0.03);border:1px dashed var(--border2);border-radius:8px}
+/* Countdown card override — make it pop */
+#cd-main-card{background:linear-gradient(135deg,rgba(20,14,4,0.95),rgba(14,10,2,0.98));border:1.5px solid rgba(239,159,39,0.25);position:relative;overflow:hidden}
+#cd-main-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(239,159,39,0.07) 0%,transparent 65%);pointer-events:none}
+#cd-main-card .dash-card-head{background:linear-gradient(90deg,rgba(239,159,39,0.12),rgba(239,159,39,0.04));border-bottom-color:rgba(239,159,39,0.2)}
 .notice-mini{display:flex;align-items:flex-start;gap:8px;padding:.55rem 0;border-bottom:1px solid var(--border)}
 .notice-mini:last-child{border-bottom:none}
 .notice-mini-icon{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
 .notice-mini-title{font-size:12px;font-weight:700;line-height:1.3}
 .notice-mini-date{font-size:10px;font-family:var(--mono);color:var(--muted2)}
-@media(max-width:700px){.home-dashboard{grid-template-columns:1fr}}
+@media(max-width:700px){.home-dashboard{grid-template-columns:1fr}.top3-teams-grid{grid-template-columns:1fr!important}}
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--orange);color:var(--text);padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .admin-only{display:none}
@@ -372,16 +403,18 @@ body.admin-mode .admin-only-block{display:block}
       </div>
     </div>
 
-    <!-- 2. MOST KILLS PLAYER (single card) + 3. MOST POINTS TEAM -->
-    <div class="dash-card">
-      <div class="dash-card-head"><i class="ti ti-flame"></i><span>Most Kills — MVP</span></div>
-      <div class="dash-card-body" id="home-mvp-body">
+    <!-- 2. MOST POINTS — TOP 3 TEAMS (full width) -->
+    <div class="dash-card home-dashboard-full">
+      <div class="dash-card-head"><i class="ti ti-trophy"></i><span>Most Points — Top 3 Teams</span></div>
+      <div class="dash-card-body" id="home-topteam-body">
         <div class="empty-state" style="padding:1rem;font-size:12px">No data yet.</div>
       </div>
     </div>
+
+    <!-- 3. MOST KILLS MVP -->
     <div class="dash-card">
-      <div class="dash-card-head"><i class="ti ti-trophy"></i><span>Most Points — Top Team</span></div>
-      <div class="dash-card-body" id="home-topteam-body">
+      <div class="dash-card-head"><i class="ti ti-flame"></i><span>Most Kills — MVP</span></div>
+      <div class="dash-card-body" id="home-mvp-body">
         <div class="empty-state" style="padding:1rem;font-size:12px">No data yet.</div>
       </div>
     </div>
@@ -394,18 +427,23 @@ body.admin-mode .admin-only-block{display:block}
       </div>
     </div>
 
-    <!-- 5. RECENT MATCH RESULT + RECENT NOTICES -->
-    <div class="dash-card">
-      <div class="dash-card-head"><i class="ti ti-device-gamepad-2"></i><span>Recent Results</span></div>
+    <!-- 5. PREVIOUS 2 MATCH HISTORY (full width) -->
+    <div class="dash-card home-dashboard-full">
+      <div class="dash-card-head"><i class="ti ti-history"></i><span>Recent Match History</span></div>
       <div class="dash-card-body" id="home-results-body">
         <div class="empty-state" style="padding:1rem;font-size:12px">No completed matches.</div>
       </div>
     </div>
 
-    <div class="dash-card home-dashboard-full">
-      <div class="dash-card-head"><i class="ti ti-speakerphone"></i><span>Recent Notices</span></div>
-      <div class="dash-card-body" id="home-notices-body">
-        <div class="empty-state" style="padding:1rem;font-size:12px">No notices yet.</div>
+    <!-- REAL-TIME COUNTDOWN — replaces Recent Notices -->
+    <div class="dash-card home-dashboard-full" id="cd-main-card">
+      <div class="dash-card-head">
+        <i class="ti ti-clock-countdown" id="cd-head-icon"></i>
+        <span id="cd-head-title">Next Match Countdown</span>
+        <span id="cd-head-dot" style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--warning);box-shadow:0 0 8px var(--warning);display:inline-block;animation:cdDotPulse 1.5s ease-in-out infinite"></span>
+      </div>
+      <div class="dash-card-body" id="cd-body">
+        <div class="empty-state" style="padding:1.5rem;font-size:12px">No upcoming match scheduled.</div>
       </div>
     </div>
 
@@ -662,8 +700,7 @@ body.admin-mode .admin-only-block{display:block}
       <div class="form-group"><label>Team 2</label><select id="m-t2"></select></div>
       <div class="form-group"><label>Map</label><select id="m-map"></select></div>
       <div class="form-group"><label>Round</label><select id="m-round"><option>Group Stage</option><option>Qualifier 1</option><option>Eliminator</option><option>Qualifier 2</option><option>Final</option></select></div>
-      <div class="form-group"><label>Date</label><input type="text" id="m-date" placeholder="e.g. Jun 10"></div>
-      <div class="form-group"><label>Time</label><input type="text" id="m-time" placeholder="e.g. 8:00 PM"></div>
+      <div class="form-group"><label>Match Date &amp; Time</label><input type="datetime-local" id="m-datetime" style="color-scheme:dark"></div>
     </div>
     <div class="modal-actions"><div></div><div class="right"><button class="ghost-btn" onclick="closeModal('match-modal')">Cancel</button><button class="primary-btn" onclick="saveMatch()">Save Match</button></div></div>
   </div>
@@ -991,6 +1028,8 @@ function switchTab(id){
 }
 
 function renderAll(){
+  clearInterval(_cdInterval);
+  clearInterval(_liveWatchInterval);
   renderTeams();renderSchedule();renderBracket();
   renderStandings();renderKillLeaderboard();renderPerformance();renderNotices();renderPlayersTab();
   updateHeaderStats();
@@ -1045,45 +1084,71 @@ function renderHomeTop3(){
 function renderHomeMVP(){
   const el=document.getElementById('home-mvp-body');
   if(!el) return;
-  const players=getAllPlayerStats().sort((a,b)=>b.kills-a.kills);
-  const mvp=players[0];
-  if(!mvp){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No data yet.</div>';return;}
-  const kd=mvp.deaths>0?(mvp.kills/mvp.deaths).toFixed(2):mvp.kills.toFixed(2);
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:56px;height:56px;border-radius:12px;background:${BG(mvp.color)};color:${mvp.color};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;font-family:var(--mono);border:2px solid ${mvp.color};box-shadow:0 0 18px ${mvp.color}55;flex-shrink:0">${mvp.name.slice(0,2).toUpperCase()}</div>
-      <div>
-        <div style="font-size:18px;font-weight:700;color:var(--orange)">${mvp.name}</div>
-        <div style="font-size:11px;font-family:var(--mono);color:${mvp.color};margin-top:2px">${mvp.team} [${mvp.tag}]</div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--orange)">${mvp.kills}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">KILLS</div></div>
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--info)">${kd}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">K/D</div></div>
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--muted)">${mvp.deaths}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">DEATHS</div></div>
+  const players=getAllPlayerStats().sort((a,b)=>b.kills-a.kills).slice(0,5);
+  if(!players.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No data yet.</div>';return;}
+  const rankEmoji=['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const rankColors=['#FFD700','#C0C0C0','#CD7F32','var(--muted)','var(--muted)'];
+  el.innerHTML=players.map((p,i)=>{
+    const kd=p.deaths>0?(p.kills/p.deaths).toFixed(2):p.kills.toFixed(0);
+    const isTop=i===0;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:.5rem 0;border-bottom:${i<4?'1px solid var(--border)':'none'};${isTop?'background:linear-gradient(90deg,rgba(232,115,10,0.06),transparent);margin:0 -1rem;padding-left:1rem;padding-right:1rem;border-radius:6px':''}">
+      <div style="font-size:14px;width:22px;text-align:center;flex-shrink:0">${rankEmoji[i]}</div>
+      <div style="width:34px;height:34px;border-radius:8px;background:${BG(p.color)};color:${p.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--mono);border:1.5px solid ${p.color};${isTop?'box-shadow:0 0 12px '+p.color+'66':''}flex-shrink:0">${p.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:${isTop?'14px':'13px'};font-weight:700;color:${isTop?'var(--orange)':'var(--text)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+        <div style="font-size:9px;font-family:var(--mono);color:${p.color};margin-top:1px">${p.team} [${p.tag}]</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <div style="text-align:center">
+          <div style="font-size:${isTop?'18px':'15px'};font-weight:700;font-family:var(--mono);color:${rankColors[i]};${isTop?'text-shadow:0 0 10px rgba(255,215,0,0.5)':''}">${p.kills}</div>
+          <div style="font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">KILLS</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:${isTop?'18px':'15px'};font-weight:700;font-family:var(--mono);color:var(--info)">${kd}</div>
+          <div style="font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">K/D</div>
         </div>
       </div>
     </div>`;
+  }).join('');
 }
 
 function renderHomeTopTeam(){
   const el=document.getElementById('home-topteam-body');
   if(!el) return;
-  const rows=getStandingsRows();
-  const top=rows[0];
-  if(!top){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No data yet.</div>';return;}
-  const pct=top.w+top.l>0?Math.round(top.w/(top.w+top.l)*100)+'%':'—';
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:56px;height:56px;border-radius:12px;background:${BG(top.color)};color:${top.color};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:var(--mono);border:2px solid ${top.color};box-shadow:0 0 18px ${top.color}55;flex-shrink:0">${top.tag}</div>
-      <div>
-        <div style="font-size:18px;font-weight:700;color:var(--orange)">🏆 ${top.name}</div>
-        <div style="font-size:11px;font-family:var(--mono);color:${top.color};margin-top:2px">${top.w}W · ${top.l}L · Win% ${pct}</div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--orange)">${top.pts}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">POINTS</div></div>
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--success)">${top.kills}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">KILLS</div></div>
-          <div><div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--muted)">${top.p}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">PLAYED</div></div>
+  const rows=getStandingsRows().slice(0,3);
+  if(!rows.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No data yet.</div>';return;}
+  const rankIcon=['🥇','🥈','🥉'];
+  const rankGlow=['rgba(255,210,0,0.18)','rgba(200,200,200,0.1)','rgba(180,110,40,0.1)'];
+  const rankBorder=['rgba(255,210,0,0.4)','rgba(200,200,200,0.25)','rgba(180,110,40,0.25)'];
+  el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    ${rows.map((t,i)=>{
+      const pct=t.w+t.l>0?Math.round(t.w/(t.w+t.l)*100)+'%':'—';
+      return `<div style="background:${rankGlow[i]};border:1px solid ${rankBorder[i]};border-radius:10px;padding:.9rem 1rem;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-6px;right:8px;font-size:28px;opacity:.15;font-family:var(--mono);font-weight:900">#${i+1}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:42px;height:42px;border-radius:9px;background:${BG(t.color)};color:${t.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--mono);border:2px solid ${t.color};box-shadow:0 0 12px ${t.color}44;flex-shrink:0">${t.tag}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${rankIcon[i]} ${t.name}</div>
+            <div style="font-size:10px;font-family:var(--mono);color:${t.color};margin-top:1px">${t.w}W · ${t.l}L · ${pct}</div>
+          </div>
         </div>
-      </div>
-    </div>`;
+        <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden">
+          <div style="flex:1;text-align:center;padding:6px 4px;border-right:1px solid var(--border)">
+            <div style="font-size:18px;font-weight:700;font-family:var(--mono);color:var(--orange)">${t.pts}</div>
+            <div style="font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">PTS</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:6px 4px;border-right:1px solid var(--border)">
+            <div style="font-size:18px;font-weight:700;font-family:var(--mono);color:var(--success)">${t.kills}</div>
+            <div style="font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">KILLS</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:6px 4px">
+            <div style="font-size:18px;font-weight:700;font-family:var(--mono);color:var(--muted)">${t.p}</div>
+            <div style="font-size:8px;color:var(--muted);font-family:var(--mono);letter-spacing:1px">PLAYED</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
 function renderHomeUpcoming(){
@@ -1109,29 +1174,191 @@ function renderHomeUpcoming(){
   }).join('');
 }
 
+// ── LIVE MATCH WATCH ─────────────────────────────────────────
+// ══════════════════════════════════════════
+//  REAL-TIME COUNTDOWN ENGINE
+// ══════════════════════════════════════════
+let _cdInterval=null;
+let _liveWatchInterval=null; // kept for compat with renderAll clearInterval call
+
 function renderHomeResults(){
   const el=document.getElementById('home-results-body');
   if(!el) return;
-  const done=S.matches.filter(m=>m.status==='done').slice(-3).reverse();
-  if(!done.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No completed matches.</div>';return;}
-  el.innerHTML=done.map(m=>{
-    const t1=S.teams[m.t1]||{name:'TBD',color:'#888'};
-    const t2=m.t2>=0?(S.teams[m.t2]||{name:'TBD',color:'#888'}):{name:'BYE',color:'#888'};
-    const w1=m.s1>m.s2,w2=m.s2>m.s1;
-    return `<div class="result-card">
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-          <span style="font-size:13px;font-weight:700;color:${w1?t1.color:'var(--muted)'};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t1.name}</span>
-          <span class="result-score ${w1?'win':'lose'}">${m.s1??'—'}</span>
-          <span style="font-size:10px;font-family:var(--mono);color:var(--muted2)">:</span>
-          <span class="result-score ${w2?'win':'lose'}">${m.s2??'—'}</span>
-          <span style="font-size:13px;font-weight:700;color:${w2?t2.color:'var(--muted)'};flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t2.name}</span>
+  const done=S.matches.filter(m=>m.status==='done').slice(-2).reverse();
+  if(!done.length){el.innerHTML='<div class="empty-state" style="padding:1.2rem;font-size:12px">No completed matches yet.</div>';return;}
+  el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(${Math.min(done.length,2)},1fr);gap:12px">
+    ${done.map(m=>{
+      const t1=S.teams[m.t1]||{name:'TBD',color:'#888',tag:'??'};
+      const t2=m.t2>=0?(S.teams[m.t2]||{name:'TBD',color:'#888',tag:'??'}):{name:'BYE',color:'#888',tag:'—'};
+      const w1=m.s1>m.s2, w2=m.s2>m.s1;
+      const winner=w1?t1:w2?t2:null;
+      // Kill totals per team
+      const t1kills=(m.playerStats?.t1||[]).reduce((a,p)=>a+(p.kills||0),0);
+      const t2kills=(m.playerStats?.t2||[]).reduce((a,p)=>a+(p.kills||0),0);
+      return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <!-- Header -->
+        <div style="background:var(--surface3);padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <span style="font-size:9px;font-family:var(--mono);letter-spacing:1.5px;color:var(--muted);text-transform:uppercase">${m.round||'Match'} · ${m.map||''}</span>
+          <span style="font-size:9px;font-family:var(--mono);color:var(--muted2)">${m.date||''}</span>
         </div>
-        <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${m.map} · ${m.date||'—'}</div>
-      </div>
-    </div>`;
-  }).join('');
+        <!-- Scoreboard -->
+        <div style="padding:.85rem 1rem">
+          <!-- Team 1 row -->
+          <div style="display:flex;align-items:center;gap:10px;padding:.45rem 0;border-bottom:1px solid var(--border)">
+            <div style="width:32px;height:32px;border-radius:7px;background:${BG(t1.color)};color:${t1.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);border:1.5px solid ${t1.color};flex-shrink:0;${w1?'box-shadow:0 0 10px '+t1.color+'55':''}">${t1.tag}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:${w1?t1.color:'var(--muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w1?'🏆 ':''} ${t1.name}</div>
+              <div style="font-size:9px;font-family:var(--mono);color:var(--muted2);margin-top:1px">${t1kills} kills</div>
+            </div>
+            <div style="font-size:28px;font-weight:900;font-family:var(--mono);color:${w1?'var(--success)':'var(--danger)'};text-shadow:0 0 12px ${w1?'rgba(29,158,117,0.5)':'rgba(226,75,74,0.4)'};min-width:28px;text-align:center">${m.s1??'—'}</div>
+          </div>
+          <!-- Team 2 row -->
+          <div style="display:flex;align-items:center;gap:10px;padding:.45rem 0">
+            <div style="width:32px;height:32px;border-radius:7px;background:${BG(t2.color)};color:${t2.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);border:1.5px solid ${t2.color};flex-shrink:0;${w2?'box-shadow:0 0 10px '+t2.color+'55':''}">${t2.tag}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:${w2?t2.color:'var(--muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w2?'🏆 ':''} ${t2.name}</div>
+              <div style="font-size:9px;font-family:var(--mono);color:var(--muted2);margin-top:1px">${t2kills} kills</div>
+            </div>
+            <div style="font-size:28px;font-weight:900;font-family:var(--mono);color:${w2?'var(--success)':'var(--danger)'};text-shadow:0 0 12px ${w2?'rgba(29,158,117,0.5)':'rgba(226,75,74,0.4)'};min-width:28px;text-align:center">${m.s2??'—'}</div>
+          </div>
+          ${winner?`<div style="margin-top:8px;text-align:center;font-size:10px;font-family:var(--mono);color:var(--success);letter-spacing:1px;background:rgba(29,158,117,0.08);border-radius:5px;padding:4px">✅ WINNER: ${winner.name}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
+
+function renderCountdown(){
+  clearInterval(_cdInterval);
+  const el=document.getElementById('cd-body');
+  if(!el) return;
+  const liveMatch=S.matches.find(m=>m.status==='live');
+  const pendingWithDT=S.matches.filter(m=>m.status==='pending'&&m.datetime).sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  const nextMatch=liveMatch||pendingWithDT[0]||S.matches.find(m=>m.status==='pending');
+  if(!nextMatch){
+    const lastDone=S.matches.filter(m=>m.status==='done').slice(-1)[0];
+    if(lastDone) _renderCdDone(el,lastDone); else el.innerHTML='<div class="empty-state" style="padding:1.5rem;font-size:12px">No matches scheduled yet.</div>';
+    _setCdHeader('idle'); return;
+  }
+  if(nextMatch.status==='live') _renderCdLive(el,nextMatch);
+  else _renderCdPending(el,nextMatch,!!nextMatch.datetime);
+}
+
+function _setCdHeader(mode){
+  const icon=document.getElementById('cd-head-icon');
+  const title=document.getElementById('cd-head-title');
+  const dot=document.getElementById('cd-head-dot');
+  const card=document.getElementById('cd-main-card');
+  if(!card) return;
+  if(mode==='live'){
+    if(icon) icon.className='ti ti-radio';
+    if(title) title.textContent='LIVE NOW';
+    if(dot) dot.style.cssText='margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--danger);box-shadow:0 0 10px var(--danger);display:inline-block;animation:cdDotPulse .8s ease-in-out infinite';
+    card.style.borderColor='rgba(226,75,74,0.55)'; card.style.boxShadow='0 0 30px rgba(226,75,74,0.18)';
+  } else if(mode==='pending'){
+    if(icon) icon.className='ti ti-clock-countdown';
+    if(title) title.textContent='Next Match Countdown';
+    if(dot) dot.style.cssText='margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--warning);box-shadow:0 0 8px var(--warning);display:inline-block;animation:cdDotPulse 1.5s ease-in-out infinite';
+    card.style.borderColor='rgba(239,159,39,0.4)'; card.style.boxShadow='0 0 24px rgba(239,159,39,0.1)';
+  } else if(mode==='done'){
+    if(icon) icon.className='ti ti-trophy';
+    if(title) title.textContent='Tournament Result';
+    if(dot) dot.style.cssText='margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);display:inline-block';
+    card.style.borderColor='rgba(29,158,117,0.35)'; card.style.boxShadow='0 0 20px rgba(29,158,117,0.08)';
+  } else {
+    if(icon) icon.className='ti ti-clock';
+    if(title) title.textContent='Match Countdown';
+    if(dot) dot.style.cssText='margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block';
+    card.style.borderColor=''; card.style.boxShadow='';
+  }
+}
+
+function _matchTeamsHTML(match){
+  const t1=S.teams[match.t1]||{name:'TBD',color:'#888'};
+  const t2=match.t2>=0?(S.teams[match.t2]||{name:'TBD',color:'#888'}):{name:'BYE',color:'#888'};
+  return `<div class="cd-match-row">
+    <div class="cd-team-pill"><div class="dot" style="background:${t1.color};box-shadow:0 0 6px ${t1.color}"></div><span class="cd-team-name" style="color:${t1.color}">${t1.name}</span></div>
+    <div class="cd-vs">VS</div>
+    <div class="cd-team-pill"><div class="dot" style="background:${t2.color};box-shadow:0 0 6px ${t2.color}"></div><span class="cd-team-name" style="color:${t2.color}">${t2.name}</span></div>
+  </div>
+  <div class="cd-meta">${[match.map,match.round,match.date?(match.date+(match.time?' · '+match.time:'')):''].filter(Boolean).join(' · ')}</div>`;
+}
+
+function _p(n){return String(Math.max(0,n)).padStart(2,'0');}
+
+function _renderCdPending(el,match,hasDatetime){
+  _setCdHeader('pending');
+  el.innerHTML=`<div style="text-align:center;padding:.5rem 0">
+    <div class="cd-status-badge pending">⏳ STARTING SOON</div>
+    <div class="cd-wrap">
+      <div class="cd-block"><div class="cd-num pending" id="cd-d">--</div><div class="cd-lbl">DAYS</div></div>
+      <div class="cd-sep pending">:</div>
+      <div class="cd-block"><div class="cd-num pending" id="cd-h">--</div><div class="cd-lbl">HOURS</div></div>
+      <div class="cd-sep pending">:</div>
+      <div class="cd-block"><div class="cd-num pending" id="cd-m">--</div><div class="cd-lbl">MINS</div></div>
+      <div class="cd-sep pending">:</div>
+      <div class="cd-block"><div class="cd-num pending" id="cd-s">--</div><div class="cd-lbl">SECS</div></div>
+    </div>
+    ${!hasDatetime?'<div class="cd-no-time">⚙️ Edit match in Schedule tab → set Date &amp; Time to enable live countdown</div>':''}
+    ${_matchTeamsHTML(match)}
+  </div>`;
+  if(!hasDatetime) return;
+  const target=new Date(match.datetime);
+  function tick(){
+    if(!document.getElementById('cd-s')){clearInterval(_cdInterval);return;}
+    const now=new Date(), diff=target-now;
+    if(diff<=0){clearInterval(_cdInterval);renderCountdown();return;}
+    const ts=Math.floor(diff/1000);
+    const d=Math.floor(ts/86400), h=Math.floor((ts%86400)/3600), m=Math.floor((ts%3600)/60), s=ts%60;
+    const dEl=document.getElementById('cd-d'), hEl=document.getElementById('cd-h'), mEl=document.getElementById('cd-m'), sEl=document.getElementById('cd-s');
+    if(dEl) dEl.textContent=_p(d);
+    if(hEl) hEl.textContent=_p(h);
+    if(mEl) mEl.textContent=_p(m);
+    if(sEl){const prev=sEl.textContent; if(prev!==_p(s)){sEl.classList.remove('cd-sec-flash');void sEl.offsetWidth;sEl.classList.add('cd-sec-flash');} sEl.textContent=_p(s);}
+  }
+  tick(); _cdInterval=setInterval(tick,1000);
+}
+
+function _renderCdLive(el,match){
+  _setCdHeader('live'); let elapsed=0;
+  el.innerHTML=`<div style="text-align:center;padding:.5rem 0">
+    <div class="cd-status-badge live">🔴 LIVE — MATCH IN PROGRESS</div>
+    <div class="cd-wrap">
+      <div class="cd-block"><div class="cd-num live" id="cd-h">00</div><div class="cd-lbl">HOURS</div></div>
+      <div class="cd-sep live">:</div>
+      <div class="cd-block"><div class="cd-num live" id="cd-m">00</div><div class="cd-lbl">MINS</div></div>
+      <div class="cd-sep live">:</div>
+      <div class="cd-block"><div class="cd-num live" id="cd-s">00</div><div class="cd-lbl">SECS</div></div>
+    </div>
+    ${_matchTeamsHTML(match)}
+  </div>`;
+  function tick(){
+    if(!document.getElementById('cd-s')){clearInterval(_cdInterval);return;}
+    const h=Math.floor(elapsed/3600), m=Math.floor((elapsed%3600)/60), s=elapsed%60;
+    const hEl=document.getElementById('cd-h'), mEl=document.getElementById('cd-m'), sEl=document.getElementById('cd-s');
+    if(hEl) hEl.textContent=_p(h); if(mEl) mEl.textContent=_p(m);
+    if(sEl){sEl.classList.remove('cd-sec-flash');void sEl.offsetWidth;sEl.classList.add('cd-sec-flash');sEl.textContent=_p(s);}
+    elapsed++;
+  }
+  tick(); _cdInterval=setInterval(tick,1000);
+}
+
+function _renderCdDone(el,match){
+  _setCdHeader('done');
+  const t1=S.teams[match.t1]||{name:'TBD',color:'#888'};
+  const t2=match.t2>=0?(S.teams[match.t2]||{name:'TBD',color:'#888'}):{name:'BYE',color:'#888'};
+  const w1=match.s1>match.s2, w2=match.s2>match.s1;
+  el.innerHTML=`<div style="text-align:center;padding:.5rem 0">
+    <div class="cd-status-badge done">✅ ALL MATCHES DONE</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin:18px 0;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:${w1?t1.color:'var(--muted)'};margin-bottom:6px">${t1.name}</div><div style="font-size:60px;font-weight:900;font-family:var(--mono);color:${w1?'var(--success)':'var(--danger)'};text-shadow:0 0 20px ${w1?'rgba(29,158,117,0.5)':'rgba(226,75,74,0.4)'};line-height:1">${match.s1??'—'}</div></div>
+      <div style="font-size:28px;font-family:var(--mono);color:var(--muted2);padding-top:22px">:</div>
+      <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:${w2?t2.color:'var(--muted)'};margin-bottom:6px">${t2.name}</div><div style="font-size:60px;font-weight:900;font-family:var(--mono);color:${w2?'var(--success)':'var(--danger)'};text-shadow:0 0 20px ${w2?'rgba(29,158,117,0.5)':'rgba(226,75,74,0.4)'};line-height:1">${match.s2??'—'}</div></div>
+    </div>
+    <div class="cd-meta">${[match.map,match.round,match.date||''].filter(Boolean).join(' · ')}</div>
+  </div>`;
+}
+
 
 function renderHomeNotices(){
   const el=document.getElementById('home-notices-body');
@@ -1419,7 +1646,7 @@ function openAddMatch(){
   populateMatchSelects();
   document.getElementById('m-t1').selectedIndex=0;
   document.getElementById('m-t2').selectedIndex=1;
-  document.getElementById('m-date').value='';document.getElementById('m-time').value='';
+  document.getElementById('m-datetime').value='';
   document.getElementById('match-modal').classList.add('open');
 }
 function openEditMatch(idx){
@@ -1428,7 +1655,8 @@ function openEditMatch(idx){
   populateMatchSelects();
   document.getElementById('m-t1').value=m.t1;document.getElementById('m-t2').value=m.t2;
   document.getElementById('m-map').value=m.map;document.getElementById('m-round').value=m.round;
-  document.getElementById('m-date').value=m.date||'';document.getElementById('m-time').value=m.time||'';
+  // Support both old string format and new ISO timestamp
+  document.getElementById('m-datetime').value=m.datetime||'';
   document.getElementById('match-modal').classList.add('open');
 }
 function populateMatchSelects(){
@@ -1440,12 +1668,20 @@ async function saveMatch(){
   const t1=parseInt(document.getElementById('m-t1').value);
   const t2=parseInt(document.getElementById('m-t2').value);
   if(t1===t2){toast('Teams must be different');return;}
+  const dtVal=document.getElementById('m-datetime').value; // e.g. "2026-06-26T21:30"
+  let dateStr='',timeStr='',datetimeISO='';
+  if(dtVal){
+    datetimeISO=dtVal;
+    const dt=new Date(dtVal);
+    dateStr=dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    timeStr=dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  }
   const match={t1,t2,map:document.getElementById('m-map').value,round:document.getElementById('m-round').value,
-    date:document.getElementById('m-date').value,time:document.getElementById('m-time').value,
+    datetime:datetimeISO, date:dateStr, time:timeStr,
     status:'pending',s1:null,s2:null,playerStats:{t1:[],t2:[]}};
   if(editingMatch===-1) S.matches.push(match);
-  else S.matches[editingMatch]={...S.matches[editingMatch],...match,s1:S.matches[editingMatch].s1,s2:S.matches[editingMatch].s2};
-  await saveState();renderSchedule();closeModal('match-modal');
+  else S.matches[editingMatch]={...S.matches[editingMatch],...match,s1:S.matches[editingMatch].s1,s2:S.matches[editingMatch].s2,status:S.matches[editingMatch].status};
+  await saveState();renderSchedule();renderHomeDashboard();closeModal('match-modal');
   toast(editingMatch===-1?'Match added!':'Match updated!');
 }
 async function deleteMatch(idx){
