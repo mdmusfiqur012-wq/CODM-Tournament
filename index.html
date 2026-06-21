@@ -105,6 +105,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   .team-card,.player-card,.dash-card,.perf-card,.stat-card,.bk-match{animation-name:fadeUp}
 }
 .portal{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem}
+/* ── PORTAL STATUS BAR (logo + admin widget) ── */
+.portal-statusbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap}
+.psb-logo{display:flex;align-items:center;gap:10px}
+.psb-logo-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--orange),#f2a33d);display:flex;align-items:center;justify-content:center;font-size:18px;color:#1a0f00;flex-shrink:0;box-shadow:0 2px 12px rgba(232,115,10,0.35)}
+.psb-logo-name{font-size:13px;font-weight:800;letter-spacing:1px;line-height:1.2}
+.psb-logo-name span{color:var(--orange)}
+.psb-status{font-size:10px;font-family:var(--mono);color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:2px}
+.psb-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);display:inline-block;animation:cdDotPulse 1.5s ease-in-out infinite}
+.psb-admin{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;border-radius:10px;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;transition:all .2s}
+.psb-admin:hover{border-color:var(--orange);background:var(--surface2)}
+.psb-admin-avatar{width:30px;height:30px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);flex-shrink:0}
+.psb-admin-info{text-align:left}
+.psb-admin-name{font-size:12px;font-weight:700;line-height:1.2}
+.psb-admin-role{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+body.admin-mode .psb-admin-avatar{background:rgba(232,115,10,0.18);color:var(--orange)}
+body.admin-mode .psb-admin-role{color:var(--orange)}
+@media(max-width:560px){.portal-statusbar{margin-bottom:1rem}.psb-logo-name{font-size:11px}.psb-admin-info{display:none}.psb-admin{padding:6px}}
 .portal-header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);position:relative}
 .portal-header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);box-shadow:0 0 20px var(--orange)}
 /* ── HERO BANNER MODE ──
@@ -154,7 +171,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .sync-dot.offline{background:var(--danger)}
 .sync-dot.syncing{background:var(--warning);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:2.5rem}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:2.5rem}
 .stat-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:8px;padding:1rem;text-align:center;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s,transform .3s var(--ease-premium);box-shadow:var(--glass-shadow);animation:fadeUp .5s var(--ease-premium) backwards}
 .stat-card:nth-child(1){animation-delay:.02s}.stat-card:nth-child(2){animation-delay:.07s}.stat-card:nth-child(3){animation-delay:.12s}.stat-card:nth-child(4){animation-delay:.17s}.stat-card:nth-child(5){animation-delay:.22s}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--orange),transparent);opacity:0;transition:opacity .3s}
@@ -175,6 +192,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .tab:hover{color:var(--text);background:var(--surface2);border-color:var(--border2);transform:translateY(-1px)}
 .tab:hover i{color:var(--orange)}
 .tab.active{color:#fff;background:linear-gradient(135deg,rgba(232,115,10,0.25),rgba(232,115,10,0.10));border-color:var(--orange);box-shadow:0 0 16px rgba(232,115,10,0.3),inset 0 0 12px rgba(232,115,10,0.08);text-shadow:0 0 8px rgba(232,115,10,0.4)}
+.live-match-btn{margin-left:auto;background:linear-gradient(135deg,#E24B4A,#c93a39)!important;color:#fff!important;border-color:#E24B4A!important;animation:liveBtnPulse 2s ease-in-out infinite}
+.live-match-btn i{animation:liveBtnBlink 1.4s ease-in-out infinite}
+@keyframes liveBtnPulse{0%,100%{box-shadow:0 0 10px rgba(226,75,74,0.4)}50%{box-shadow:0 0 20px rgba(226,75,74,0.7)}}
+@keyframes liveBtnBlink{0%,100%{opacity:1}50%{opacity:.4}}
 .tab.active i{color:var(--orange);filter:drop-shadow(0 0 4px rgba(232,115,10,0.6))}
 .tab.active::after{content:'';position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:var(--orange);border-radius:2px;box-shadow:0 0 8px var(--orange);animation:tabUnderlineIn .35s var(--ease-premium)}
 @keyframes tabUnderlineIn{from{width:0;opacity:0}to{width:24px;opacity:1}}
@@ -189,7 +210,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .team-card:hover{border-color:var(--team-color,rgba(232,115,10,0.4));box-shadow:0 0 25px rgba(var(--team-color-rgb,232,115,10),0.15),0 10px 30px rgba(0,0,0,0.4);transform:translateY(-4px)}
 .team-card:hover::before{width:4px;box-shadow:0 0 20px var(--team-color,var(--orange)),0 0 40px var(--team-color,var(--orange))}
 .team-header{padding:.9rem 1rem;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--surface2)}
-.team-emblem{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;font-family:var(--mono)}
+/* placeholder-replaced */.team-emblem-OLD{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;font-family:var(--mono)}
 .team-info{flex:1;min-width:0}
 .team-name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .team-tag-lbl{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:1px}
@@ -369,6 +390,63 @@ input[type=file]::file-selector-button:hover{border-color:var(--orange);color:va
 .dash-card-head i{font-size:14px;color:var(--orange)}
 .dash-card-head span{color:var(--muted)}
 .dash-card-body{padding:.85rem 1rem}
+.dash-card-link{margin-left:auto;background:none;border:none;color:var(--orange);font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:2px;padding:3px 6px;border-radius:4px;transition:background .2s}
+.dash-card-link:hover{background:rgba(232,115,10,0.12)}
+.dash-card-link i{font-size:11px;color:var(--orange)}
+
+/* ── 3-COLUMN DASHBOARD LAYOUT ── */
+.dash3-grid{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:1.25rem;margin-bottom:2rem;align-items:start}
+.dash3-col2,.dash3-col3{display:flex;flex-direction:column;gap:1.25rem}
+.dash3-grid>.dash-card,.dash3-col2>.dash-card,.dash3-col3>.dash-card{animation:fadeUp .55s var(--ease-premium) backwards}
+.dash3-col1{animation-delay:.03s}
+.dash3-col2>.dash-card:nth-child(1){animation-delay:.09s}.dash3-col2>.dash-card:nth-child(2){animation-delay:.15s}.dash3-col2>.dash-card:nth-child(3){animation-delay:.21s}
+.dash3-col3>.dash-card:nth-child(1){animation-delay:.12s}.dash3-col3>.dash-card:nth-child(2){animation-delay:.18s}
+@media(max-width:1080px){.dash3-grid{grid-template-columns:1fr}}
+
+/* Top Teams table (dashboard) */
+.dash-topteams-table{width:100%;border-collapse:collapse;font-size:12px}
+.dash-topteams-table th{text-align:left;padding:.5rem .75rem;font-size:9px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--border)}
+.dash-topteams-table td{padding:.55rem .75rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.dash-topteams-table tr:last-child td{border-bottom:none}
+.dash-topteams-table tr:hover td{background:rgba(255,255,255,0.02)}
+.dtt-rank{font-family:var(--mono);font-weight:700;color:var(--muted)}
+.dtt-rank.r1{color:#EAB308}.dtt-rank.r2{color:#c0c0c0}.dtt-rank.r3{color:#cd7f32}
+.dtt-team{display:flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap}
+.dtt-pts{font-family:var(--mono);font-weight:800;color:var(--orange)}
+.dash-card-footer{padding:.65rem 1rem;text-align:center;border-top:1px solid var(--border)}
+.dash-view-all-btn{background:none;border:1px solid var(--border2);color:var(--text);font-size:11px;font-weight:700;letter-spacing:.5px;padding:7px 14px;border-radius:6px;cursor:pointer;transition:all .2s;width:100%}
+.dash-view-all-btn:hover{border-color:var(--orange);color:var(--orange);background:rgba(232,115,10,0.07)}
+
+/* Live & Upcoming match list (dashboard) */
+.dlm-item{display:flex;align-items:center;gap:12px;padding:.75rem;border-radius:8px;background:var(--surface2);border:1px solid var(--border);margin-bottom:8px}
+.dlm-item:last-child{margin-bottom:0}
+.dlm-item.is-live{border-color:rgba(226,75,74,0.4);background:linear-gradient(135deg,rgba(226,75,74,0.08),var(--surface2))}
+.dlm-status-pill{font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:4px;flex-shrink:0;text-transform:uppercase}
+.dlm-status-pill.live{background:#E24B4A;color:#fff;animation:liveBtnBlink 1.4s ease-in-out infinite}
+.dlm-status-pill.upcoming{background:rgba(239,159,39,0.18);color:var(--warning);border:1px solid rgba(239,159,39,0.3)}
+.dlm-main{flex:1;min-width:0}
+.dlm-meta{font-size:9px;font-family:var(--mono);color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.dlm-teams{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.dlm-score{font-family:var(--mono);font-weight:800;font-size:15px}
+.dlm-vs{color:var(--muted2);font-size:10px;font-family:var(--mono)}
+.dlm-time{font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;flex-shrink:0;white-space:nowrap}
+
+/* Notice board (dashboard, compact) */
+.dnb-item{display:flex;gap:10px;padding:.65rem .5rem;border-bottom:1px solid var(--border)}
+.dnb-item:last-child{border-bottom:none}
+.dnb-badge{font-size:8px;font-family:var(--mono);font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:3px;background:var(--orange);color:#fff;flex-shrink:0;height:fit-content;margin-top:1px}
+.dnb-title{font-size:12px;font-weight:700;margin-bottom:2px}
+.dnb-text{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:3px}
+.dnb-date{font-size:9px;color:var(--muted2);font-family:var(--mono)}
+
+/* Kill leaders (dashboard, compact rows) */
+.dkl-item{display:flex;align-items:center;gap:10px;padding:.55rem .5rem;border-bottom:1px solid var(--border)}
+.dkl-item:last-child{border-bottom:none}
+.dkl-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:var(--mono);flex-shrink:0;background:var(--surface3);color:var(--muted)}
+.dkl-rank.r1{background:#EAB308;color:#3d2800}.dkl-rank.r2{background:#c0c0c0;color:#222}.dkl-rank.r3{background:#cd7f32;color:#fff}
+.dkl-name{font-size:12px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dkl-team{font-size:9px;color:var(--muted2);font-family:var(--mono)}
+.dkl-kills{font-family:var(--mono);font-weight:800;color:var(--orange);font-size:13px}
 /* Top 3 Fraggers with medal logos */
 .top3-row{display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:.5rem 0 .25rem}
 .top3-slot{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;max-width:110px}
@@ -604,6 +682,19 @@ body.admin-mode .admin-only-block{display:block}
   .top3-row{flex-wrap:wrap}
   .pd-stat-row{grid-template-columns:1fr}
 }
+
+/* ── Team Logo ── */
+.team-emblem{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:1px;flex-shrink:0;transition:box-shadow .3s}
+.team-logo-img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,0.1);transition:box-shadow .3s,border-color .3s}
+.team-card:hover .team-logo-img{border-color:var(--team-color,var(--orange));box-shadow:0 0 14px var(--team-color,var(--orange))44}
+/* small logo used in match displays / standings */
+.team-logo-sm{width:32px;height:32px;border-radius:7px;object-fit:cover;border:1.5px solid rgba(255,255,255,0.1);flex-shrink:0}
+.team-emblem-sm{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:11px;flex-shrink:0}
+/* logo preview in modal */
+.logo-preview-wrap{display:flex;align-items:center;gap:12px;margin-top:8px}
+.logo-preview-box{width:56px;height:56px;border-radius:10px;background:var(--glass-bg-2);border:2px dashed var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.logo-preview-box img{width:100%;height:100%;object-fit:cover}
+.logo-preview-box .ph{font-size:22px;color:var(--muted)}
 </style>
 
 </head>
@@ -631,12 +722,30 @@ body.admin-mode .admin-only-block{display:block}
 
 <div class="portal" id="main-portal" style="display:none">
 
+  <div class="portal-statusbar">
+    <div class="psb-logo">
+      <div class="psb-logo-icon"><i class="ti ti-skull"></i></div>
+      <div>
+        <div class="psb-logo-name">CODM <span>BANGLADESH</span></div>
+        <div class="psb-status"><span class="psb-dot"></span> Portal Online</div>
+      </div>
+    </div>
+    <div class="psb-admin" id="psb-admin" onclick="openAdminLogin()">
+      <div class="psb-admin-avatar"><i class="ti ti-user"></i></div>
+      <div class="psb-admin-info">
+        <div class="psb-admin-name" id="psb-admin-name">Viewer</div>
+        <div class="psb-admin-role" id="psb-admin-role">Click to login</div>
+      </div>
+      <i class="ti ti-chevron-down" style="font-size:12px;color:var(--muted)"></i>
+    </div>
+  </div>
+
   <div class="portal-header" id="portal-header">
     <img class="banner-img" id="banner-img" src="" alt="" style="display:none">
     <button class="banner-edit-btn admin-only" id="banner-edit-btn" onclick="openBannerEditor()">
       <i class="ti ti-photo"></i> <span>Edit Banner</span>
     </button>
-    <button class="admin-badge is-viewer" id="admin-toggle-btn" onclick="openAdminLogin()">
+    <button class="admin-badge is-viewer" id="admin-toggle-btn" onclick="openAdminLogin()" style="display:none">
       <i class="ti ti-lock"></i> <span id="admin-toggle-text">Viewer Mode</span>
     </button>
     <div class="badge-pill" id="hdr-badge">Season 1 · 2025</div>
@@ -652,14 +761,16 @@ body.admin-mode .admin-only-block{display:block}
   <div class="tab-bar-wrap">
     <div class="tab-bar-label">⚡ EXPLORE PORTAL</div>
     <div class="tab-bar" role="tablist">
-      <button class="tab active" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
-      <button class="tab" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
-      <button class="tab" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
-      <button class="tab" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
-      <button class="tab" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
-      <button class="tab" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
-      <button class="tab" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
-      <button class="tab admin-only" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
+      <button class="tab active" data-tab="dashboard" onclick="switchTab('dashboard')"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
+      <button class="tab" data-tab="teams" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
+      <button class="tab" data-tab="players" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
+      <button class="tab" data-tab="schedule" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
+      <button class="tab" data-tab="bracket" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
+      <button class="tab" data-tab="standings" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
+      <button class="tab" data-tab="performance" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
+      <button class="tab" data-tab="noticeboard" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
+      <button class="tab admin-only" data-tab="settings" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
+      <button class="tab live-match-btn" id="live-match-tabbtn" style="display:none" onclick="jumpToLiveMatch()"><i class="ti ti-radio"></i> Live Match</button>
     </div>
   </div>
 
@@ -668,71 +779,80 @@ body.admin-mode .admin-only-block{display:block}
     <div class="stat-card"><div class="val" id="stat-teams">—</div><div class="lbl">Teams</div></div>
     <div class="stat-card"><div class="val" id="stat-players">—</div><div class="lbl">Players</div></div>
     <div class="stat-card"><div class="val" id="stat-matches">—</div><div class="lbl">Matches</div></div>
+    <div class="stat-card" id="stat-live-card" style="display:none"><div class="val" id="stat-live" style="color:#E24B4A">—</div><div class="lbl">Live Now</div></div>
     <div class="stat-card"><div class="val" id="stat-kills">—</div><div class="lbl">Total Kills</div></div>
     <div class="stat-card"><div class="val" id="stat-status">—</div><div class="lbl">Status</div></div>
   </div>
 
-  <!-- ═══════════════════════════════════════ HOMEPAGE DASHBOARD ═══ -->
-  <div class="home-dashboard" id="home-dashboard">
+  <!-- ═══════════════════════════════════════ DASHBOARD TAB ═══ -->
+  <div id="tab-dashboard" class="tab-pane active">
+  <div class="dash3-grid">
 
-    <!-- 1. TOP 3 FRAGGERS -->
-    <div class="dash-card home-dashboard-full">
-      <div class="dash-card-head"><i class="ti ti-skull"></i><span>Top Fraggers — Kill Leaderboard</span></div>
-      <div class="dash-card-body" id="home-top3-body">
-        <div class="empty-state" style="padding:1.5rem;font-size:12px">No kill data yet.</div>
+    <!-- COLUMN 1: TOP TEAMS -->
+    <div class="dash-card dash3-col1">
+      <div class="dash-card-head"><i class="ti ti-trophy"></i><span>Top Teams</span>
+        <button class="dash-card-link" onclick="switchTab('standings')">View All <i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="dash-card-body" id="dash-topteams-body" style="padding:0">
+        <div class="empty-state" style="padding:1.5rem;font-size:12px">No teams yet.</div>
       </div>
     </div>
 
-    <!-- 2. MOST POINTS — TOP 3 TEAMS (full width) -->
-    <div class="dash-card home-dashboard-full">
-      <div class="dash-card-head"><i class="ti ti-trophy"></i><span>Most Points — Top 3 Teams</span></div>
-      <div class="dash-card-body" id="home-topteam-body">
-        <div class="empty-state" style="padding:1rem;font-size:12px">No data yet.</div>
+    <!-- COLUMN 2: LIVE & UPCOMING MATCHES + RECENT RESULTS -->
+    <div class="dash3-col2">
+      <div class="dash-card">
+        <div class="dash-card-head"><i class="ti ti-radio"></i><span>Live &amp; Upcoming Matches</span>
+          <button class="dash-card-link" onclick="switchTab('schedule')">View All <i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div class="dash-card-body" id="dash-liveupcoming-body">
+          <div class="empty-state" style="padding:1.5rem;font-size:12px">No matches scheduled.</div>
+        </div>
+      </div>
+      <div class="dash-card" id="cd-main-card">
+        <div class="dash-card-head">
+          <i class="ti ti-clock-countdown" id="cd-head-icon"></i>
+          <span id="cd-head-title">Next Match Countdown</span>
+          <span id="cd-head-dot" style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--warning);box-shadow:0 0 8px var(--warning);display:inline-block;animation:cdDotPulse 1.5s ease-in-out infinite"></span>
+        </div>
+        <div class="dash-card-body" id="cd-body">
+          <div class="empty-state" style="padding:1.5rem;font-size:12px">No upcoming match scheduled.</div>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-head"><i class="ti ti-history"></i><span>Recent Match History</span></div>
+        <div class="dash-card-body" id="home-results-body">
+          <div class="empty-state" style="padding:1rem;font-size:12px">No completed matches.</div>
+        </div>
       </div>
     </div>
 
-    <!-- 3. MOST KILLS MVP -->
-    <div class="dash-card">
-      <div class="dash-card-head"><i class="ti ti-flame"></i><span>Most Kills — MVP</span></div>
-      <div class="dash-card-body" id="home-mvp-body">
-        <div class="empty-state" style="padding:1rem;font-size:12px">No data yet.</div>
+    <!-- COLUMN 3: NOTICE BOARD + TOP KILL LEADERS -->
+    <div class="dash3-col3">
+      <div class="dash-card">
+        <div class="dash-card-head"><i class="ti ti-speakerphone"></i><span>Notice Board</span>
+          <button class="dash-card-link" onclick="switchTab('noticeboard')">View All <i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div class="dash-card-body" id="dash-notices-body" style="padding:.5rem">
+          <div class="empty-state" style="padding:1.5rem;font-size:12px">No announcements yet.</div>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-head"><i class="ti ti-skull"></i><span>Top Kill Leaders</span>
+          <button class="dash-card-link" onclick="switchTab('standings')">View All <i class="ti ti-chevron-right"></i></button>
+        </div>
+        <div class="dash-card-body" id="dash-killleaders-body" style="padding:.5rem">
+          <div class="empty-state" style="padding:1rem;font-size:12px">No kill data yet.</div>
+        </div>
       </div>
     </div>
 
-    <!-- 4. UPCOMING MATCH -->
-    <div class="dash-card">
-      <div class="dash-card-head"><i class="ti ti-clock"></i><span>Upcoming Matches</span></div>
-      <div class="dash-card-body" id="home-upcoming-body">
-        <div class="empty-state" style="padding:1rem;font-size:12px">No upcoming matches.</div>
-      </div>
-    </div>
-
-    <!-- 5. PREVIOUS 2 MATCH HISTORY (full width) -->
-    <div class="dash-card home-dashboard-full">
-      <div class="dash-card-head"><i class="ti ti-history"></i><span>Recent Match History</span></div>
-      <div class="dash-card-body" id="home-results-body">
-        <div class="empty-state" style="padding:1rem;font-size:12px">No completed matches.</div>
-      </div>
-    </div>
-
-    <!-- REAL-TIME COUNTDOWN — replaces Recent Notices -->
-    <div class="dash-card home-dashboard-full" id="cd-main-card">
-      <div class="dash-card-head">
-        <i class="ti ti-clock-countdown" id="cd-head-icon"></i>
-        <span id="cd-head-title">Next Match Countdown</span>
-        <span id="cd-head-dot" style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--warning);box-shadow:0 0 8px var(--warning);display:inline-block;animation:cdDotPulse 1.5s ease-in-out infinite"></span>
-      </div>
-      <div class="dash-card-body" id="cd-body">
-        <div class="empty-state" style="padding:1.5rem;font-size:12px">No upcoming match scheduled.</div>
-      </div>
-    </div>
-
+  </div>
   </div>
   <!-- ═══════════════════════════════════════════════════════════════ -->
 
   <!-- ═══ NAVIGATION ═══ -->
   <!-- TEAMS -->
-  <div id="tab-teams" class="tab-pane active">
+  <div id="tab-teams" class="tab-pane">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px">
       <p class="section-title" style="margin:0">Registered Teams</p>
       <button class="primary-btn admin-only" onclick="openAddTeam()"><i class="ti ti-plus"></i> Add Team</button>
@@ -948,6 +1068,20 @@ body.admin-mode .admin-only-block{display:block}
       <div class="form-group"><label>Tag (3-4 chars)</label><input type="text" id="m-team-tag" maxlength="4"></div>
     </div>
     <div class="form-group" style="margin-bottom:1.25rem"><label>Team Color</label><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px" id="color-picker"></div></div>
+    <div class="form-group" style="margin-bottom:1rem">
+      <label><i class="ti ti-photo" style="color:var(--orange)"></i> Team Logo</label>
+      <div class="logo-preview-wrap">
+        <div class="logo-preview-box" id="logo-preview-box"><span class="ph"><i class="ti ti-shield"></i></span></div>
+        <div style="flex:1">
+          <input type="text" id="m-logo-url" placeholder="Paste image URL (https://...)" oninput="previewLogoUrl()" style="margin-bottom:6px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--muted)">
+            <i class="ti ti-upload"></i> Or upload from device
+            <input type="file" id="m-logo-file" accept="image/*" onchange="handleLogoFile(event)" style="display:none">
+          </label>
+          <button class="ghost-btn" onclick="clearLogo()" style="margin-top:4px;font-size:11px;padding:4px 10px"><i class="ti ti-x"></i> Clear</button>
+        </div>
+      </div>
+    </div>
     <div class="form-grid-2" style="margin-bottom:1rem">
       <div class="form-group"><label><i class="ti ti-brand-facebook" style="color:#1877F2"></i> Facebook URL</label><input type="text" id="m-facebook" placeholder="https://facebook.com/yourpage"></div>
       <div class="form-group"><label><i class="ti ti-brand-youtube" style="color:#FF0000"></i> YouTube URL</label><input type="text" id="m-youtube" placeholder="https://youtube.com/@channel"></div>
@@ -1308,6 +1442,8 @@ function doAdminLogin(){
     document.body.classList.add('admin-mode');
     document.getElementById('admin-toggle-btn').className='admin-badge is-admin';
     document.getElementById('admin-toggle-text').textContent='Admin Mode';
+    document.getElementById('psb-admin-name').textContent='Admin User';
+    document.getElementById('psb-admin-role').textContent='Super Admin';
     closeModal('admin-login-modal');
     toast('Welcome, Admin!');
     renderAll();
@@ -1317,6 +1453,8 @@ function doAdminLogout(){
   IS_ADMIN=false;document.body.classList.remove('admin-mode');
   document.getElementById('admin-toggle-btn').className='admin-badge is-viewer';
   document.getElementById('admin-toggle-text').textContent='Viewer Mode';
+  document.getElementById('psb-admin-name').textContent='Viewer';
+  document.getElementById('psb-admin-role').textContent='Click to login';
   closeModal('admin-login-modal');toast('Logged out');
 }
 function changeAdminPass(){
@@ -1329,11 +1467,11 @@ function changeAdminPass(){
 // ══════════════════════════════════════════
 //  TABS
 // ══════════════════════════════════════════
-const TAB_ORDER=['teams','players','schedule','bracket','standings','performance','noticeboard','settings'];
-let currentTab='teams';
+const TAB_ORDER=['dashboard','teams','players','schedule','bracket','standings','performance','noticeboard','settings'];
+let currentTab='dashboard';
 function switchTab(id){
   currentTab=id;
-  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',TAB_ORDER[i]===id);});
+  document.querySelectorAll('.tab[data-tab]').forEach(t=>{t.classList.toggle('active',t.dataset.tab===id);});
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   const pane=document.getElementById('tab-'+id);
   pane.classList.add('active');
@@ -1350,7 +1488,11 @@ function switchTab(id){
   if(id==='performance') renderPerformance();
   if(id==='noticeboard') renderNotices();
   if(id==='players') renderPlayersTab();
+  if(id==='dashboard') renderHomeDashboard();
   enhanceCards();
+}
+function jumpToLiveMatch(){
+  switchTab('schedule');
 }
 
 // ── Swipe-to-switch tabs (mobile) ──
@@ -1367,7 +1509,7 @@ function switchTab(id){
     sx=null;
     if(dt>MAXTIME||Math.abs(dx)<THRESH||Math.abs(dy)>RESTRAINT) return;
     const visible=TAB_ORDER.filter(id=>{
-      const btn=document.querySelectorAll('.tab')[TAB_ORDER.indexOf(id)];
+      const btn=document.querySelector(`.tab[data-tab="${id}"]`);
       return btn && btn.offsetParent!==null;
     });
     const cur=visible.indexOf(currentTab);
@@ -1460,6 +1602,97 @@ function renderHomeDashboard(){
   renderHomeResults();
   renderHomeNotices();
   renderCountdown();
+  renderDashTopTeams();
+  renderDashLiveUpcoming();
+  renderDashNotices();
+  renderDashKillLeaders();
+}
+
+// ── New 3-column dashboard widgets ──
+function renderDashTopTeams(){
+  const el=document.getElementById('dash-topteams-body');
+  if(!el) return;
+  const rows=getStandingsRows().slice(0,5);
+  if(!rows.length||!S.teams.length){el.innerHTML='<div class="empty-state" style="padding:1.5rem;font-size:12px">No teams yet.</div>';return;}
+  el.innerHTML=`<table class="dash-topteams-table"><thead><tr>
+      <th>#</th><th>Team</th><th>M</th><th>W</th><th>L</th><th>Pts</th>
+    </tr></thead><tbody>
+    ${rows.map((r,i)=>{
+      const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+      return `<tr>
+        <td class="dtt-rank ${rc}">${i+1}</td>
+        <td><div class="dtt-team"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${r.color};flex-shrink:0"></span>${r.name}</div></td>
+        <td style="font-family:var(--mono);color:var(--muted)">${r.p}</td>
+        <td style="font-family:var(--mono);color:var(--success)">${r.w}</td>
+        <td style="font-family:var(--mono);color:#E24B4A">${r.l}</td>
+        <td class="dtt-pts">${r.pts}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>
+    <div class="dash-card-footer"><button class="dash-view-all-btn" onclick="switchTab('standings')">View All Teams</button></div>`;
+}
+
+function renderDashLiveUpcoming(){
+  const el=document.getElementById('dash-liveupcoming-body');
+  if(!el) return;
+  const live=S.matches.filter(m=>m.status==='live');
+  const _parseDate=m=>{const s=((m.date||'')+(m.time?' '+m.time:'')).trim();if(!s)return Infinity;const d=new Date(s);return isNaN(d)?Infinity:d.getTime();};
+  const upcoming=S.matches.filter(m=>m.status==='pending').sort((a,b)=>_parseDate(a)-_parseDate(b)).slice(0,3);
+  const items=[...live,...upcoming].slice(0,4);
+  if(!items.length){el.innerHTML='<div class="empty-state" style="padding:1.5rem;font-size:12px">No matches scheduled.</div>';return;}
+  el.innerHTML=items.map(m=>{
+    const t1=S.teams[m.t1]||{name:'TBD',color:'#888'};
+    const t2=m.t2>=0?(S.teams[m.t2]||{name:'TBD',color:'#888'}):{name:'BYE',color:'#888'};
+    const isLive=m.status==='live';
+    const dateStr=[m.date,m.time].filter(Boolean).join(' · ')||'TBD';
+    return `<div class="dlm-item ${isLive?'is-live':''}">
+      <span class="dlm-status-pill ${isLive?'live':'upcoming'}">${isLive?'● Live':'Upcoming'}</span>
+      <div class="dlm-main">
+        <div class="dlm-meta">${m.round||'Match'} · ${m.map||''}</div>
+        <div class="dlm-teams">
+          ${teamLogoHTML(t1,24)}<span style="color:${t1.color}">${t1.name}</span>
+          ${isLive?`<span class="dlm-score">${m.s1??0}</span><span class="dlm-vs">VS</span><span class="dlm-score">${m.s2??0}</span>`:`<span class="dlm-vs">VS</span>`}
+          <span style="color:${t2.color}">${t2.name}</span>${teamLogoHTML(t2,24)}
+        </div>
+      </div>
+      <div class="dlm-time">${isLive?'<i class="ti ti-clock" style="font-size:10px"></i> Now':dateStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashNotices(){
+  const el=document.getElementById('dash-notices-body');
+  if(!el) return;
+  const notices=[...(S.notices||[])].reverse().slice(0,3);
+  if(!notices.length){el.innerHTML='<div class="empty-state" style="padding:1.5rem;font-size:12px">No announcements yet.</div>';return;}
+  const labels={banned:'ALERT',info:'NEW',warn:'WARN'};
+  el.innerHTML=notices.map(n=>`
+    <div class="dnb-item">
+      <span class="dnb-badge">${labels[n.category]||'NEW'}</span>
+      <div style="flex:1;min-width:0">
+        <div class="dnb-title">${n.title}</div>
+        <div class="dnb-text">${n.text}</div>
+        <div class="dnb-date">${n.date}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderDashKillLeaders(){
+  const el=document.getElementById('dash-killleaders-body');
+  if(!el) return;
+  const players=getAllPlayerStats().sort((a,b)=>b.kills-a.kills).slice(0,5);
+  if(!players.length){el.innerHTML='<div class="empty-state" style="padding:1rem;font-size:12px">No kill data yet.</div>';return;}
+  el.innerHTML=players.map((p,i)=>{
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    return `<div class="dkl-item">
+      <span class="dkl-rank ${rc}">${i+1}</span>
+      <div style="flex:1;min-width:0">
+        <div class="dkl-name">${p.name}</div>
+        <div class="dkl-team">${p.team}</div>
+      </div>
+      <span class="dkl-kills">${p.kills}</span>
+    </div>`;
+  }).join('');
 }
 
 function renderHomeTop3(){
@@ -1566,7 +1799,8 @@ function renderHomeTopTeam(){
 function renderHomeUpcoming(){
   const el=document.getElementById('home-upcoming-body');
   if(!el) return;
-  const upcoming=S.matches.filter(m=>m.status==='pending').slice(0,4);
+  const _parseDate2=m=>{const s=((m.date||'')+(m.time?' '+m.time:'')).trim();if(!s)return Infinity;const d=new Date(s);return isNaN(d)?Infinity:d.getTime();};
+  const upcoming=S.matches.filter(m=>m.status==='pending').sort((a,b)=>_parseDate2(a)-_parseDate2(b)).slice(0,4);
   if(!upcoming.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-family:var(--mono);padding:.5rem 0">No upcoming matches.</div>';return;}
   el.innerHTML=upcoming.map(m=>{
     const t1=S.teams[m.t1]||{name:'TBD',color:'#888',tag:'—'};
@@ -1617,7 +1851,7 @@ function renderHomeResults(){
         <div style="padding:.85rem 1rem">
           <!-- Team 1 row -->
           <div style="display:flex;align-items:center;gap:10px;padding:.45rem 0;border-bottom:1px solid var(--border)">
-            <div style="width:32px;height:32px;border-radius:7px;background:${BG(t1.color)};color:${t1.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);border:1.5px solid ${t1.color};flex-shrink:0;${w1?'box-shadow:0 0 10px '+t1.color+'55':''}">${t1.tag}</div>
+            ${teamLogoHTML(t1,32)}
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:700;color:${w1?t1.color:'var(--muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w1?'🏆 ':''} ${t1.name}</div>
               <div style="font-size:9px;font-family:var(--mono);color:var(--muted2);margin-top:1px">${t1kills} kills</div>
@@ -1626,7 +1860,7 @@ function renderHomeResults(){
           </div>
           <!-- Team 2 row -->
           <div style="display:flex;align-items:center;gap:10px;padding:.45rem 0">
-            <div style="width:32px;height:32px;border-radius:7px;background:${BG(t2.color)};color:${t2.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);border:1.5px solid ${t2.color};flex-shrink:0;${w2?'box-shadow:0 0 10px '+t2.color+'55':''}">${t2.tag}</div>
+            ${teamLogoHTML(t2,32)}
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:700;color:${w2?t2.color:'var(--muted)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w2?'🏆 ':''} ${t2.name}</div>
               <div style="font-size:9px;font-family:var(--mono);color:var(--muted2);margin-top:1px">${t2kills} kills</div>
@@ -1689,9 +1923,9 @@ function _matchTeamsHTML(match){
   const t1=S.teams[match.t1]||{name:'TBD',color:'#888'};
   const t2=match.t2>=0?(S.teams[match.t2]||{name:'TBD',color:'#888'}):{name:'BYE',color:'#888'};
   return `<div class="cd-match-row">
-    <div class="cd-team-pill"><div class="dot" style="background:${t1.color};box-shadow:0 0 6px ${t1.color}"></div><span class="cd-team-name" style="color:${t1.color}">${t1.name}</span></div>
+    <div class="cd-team-pill">${teamLogoHTML(t1,28)}<span class="cd-team-name" style="color:${t1.color}">${t1.name}</span></div>
     <div class="cd-vs">VS</div>
-    <div class="cd-team-pill"><div class="dot" style="background:${t2.color};box-shadow:0 0 6px ${t2.color}"></div><span class="cd-team-name" style="color:${t2.color}">${t2.name}</span></div>
+    <div class="cd-team-pill">${teamLogoHTML(t2,28)}<span class="cd-team-name" style="color:${t2.color}">${t2.name}</span></div>
   </div>
   <div class="cd-meta">${[match.map,match.round,match.date?(match.date+(match.time?' · '+match.time:'')):''].filter(Boolean).join(' · ')}</div>`;
 }
@@ -1812,7 +2046,7 @@ function renderTeams(){
     const socialRow=(fbLink||ytLink)?`<div class="social-links">${fbLink}${ytLink}</div>`:'';
     card.innerHTML=`
       <div class="team-header">
-        <div class="team-emblem" style="background:${BG(t.color)};color:${t.color};box-shadow:0 0 10px ${t.color}44">${initials(t.name)}</div>
+        ${t.logo?`<img class="team-logo-img" src="${t.logo}" alt="${t.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:`<div class="team-emblem" style="background:${BG(t.color)};color:${t.color};box-shadow:0 0 10px ${t.color}44">${initials(t.name)}</div>`}
         <div class="team-info"><div class="team-name">${t.name}</div><div class="team-tag-lbl">[${t.tag}] · ${t.players.filter(p=>p.name).length} players</div></div>
         ${editBtn}
       </div>
@@ -1854,6 +2088,7 @@ function updateHeaderStats(){
   const players=S.teams.reduce((a,t)=>a+t.players.filter(p=>p.name).length,0);
   const done=S.matches.filter(m=>m.status==='done').length;
   const total=S.matches.length;
+  const live=S.matches.filter(m=>m.status==='live').length;
   const status=S.settings.status||'Open';
   let tk=0;
   S.matches.forEach(m=>{if(m.playerStats){[...(m.playerStats.t1||[]),...(m.playerStats.t2||[])].forEach(ps=>tk+=ps.kills||0);}});
@@ -1862,6 +2097,15 @@ function updateHeaderStats(){
   animateCount(document.getElementById('stat-kills'),tk);
   document.getElementById('stat-matches').textContent=done+'/'+total;
   document.getElementById('stat-status').textContent=status;
+  const liveCard=document.getElementById('stat-live-card');
+  if(live>0){
+    liveCard.style.display='';
+    document.getElementById('stat-live').textContent=live;
+  } else {
+    liveCard.style.display='none';
+  }
+  const liveBtn=document.getElementById('live-match-tabbtn');
+  if(liveBtn) liveBtn.style.display=live>0?'':'none';
 }
 
 async function exportPortalImage(){
@@ -1909,6 +2153,7 @@ function openAddTeam(){
   document.getElementById('m-facebook').value='';
   document.getElementById('m-youtube').value='';
   document.getElementById('delete-team-btn').style.display='none';
+  document.getElementById('m-logo-url').value='';setLogoPreview('');
   renderColorPicker(COLORS[S.teams.length%COLORS.length]);
   renderPlayerInputs([{name:'',role:'ATK',weapon:'ASSAULT'},{name:'',role:'ATK',weapon:'SMG'},{name:'',role:'DEF',weapon:'SNIPER'},{name:'',role:'DEF',weapon:'ASSAULT'},{name:'',role:'IGL',weapon:'SMG'}]);
   document.getElementById('team-modal').classList.add('open');
@@ -1920,6 +2165,8 @@ function openEditTeam(idx){
   document.getElementById('m-team-tag').value=t.tag;
   document.getElementById('m-facebook').value=t.facebook||'';
   document.getElementById('m-youtube').value=t.youtube||'';
+  document.getElementById('m-logo-url').value=t.logo||'';
+  setLogoPreview(t.logo||'');
   document.getElementById('delete-team-btn').style.display='';
   renderColorPicker(t.color);renderPlayerInputs(t.players);
   document.getElementById('team-modal').classList.add('open');
@@ -1973,8 +2220,9 @@ async function saveTeam(){
     if(!nameEl||!prow||!document.body.contains(prow)) continue;
     players.push({name:nameEl.value.trim(),role:document.getElementById('pr'+i).value,weapon:document.getElementById('pw'+i).value||''});
   }
-  if(editingTeam===-1) S.teams.push({name,tag:tag||'???',color,facebook,youtube,players});
-  else S.teams[editingTeam]={name,tag:tag||'???',color,facebook,youtube,players};
+  const logo=document.getElementById('m-logo-url').value.trim();
+  if(editingTeam===-1) S.teams.push({name,tag:tag||'???',color,facebook,youtube,logo,players});
+  else S.teams[editingTeam]={...S.teams[editingTeam],name,tag:tag||'???',color,facebook,youtube,logo,players};
   await saveState();renderTeams();renderPlayersTab();closeModal('team-modal');
   toast(editingTeam===-1?'Team added!':'Team updated!');
 }
@@ -2041,7 +2289,7 @@ function renderSchedule(){
       <button class="icon-btn" onclick="deleteMatch(${i})" style="color:#E24B4A"><i class="ti ti-trash"></i></button>`:'';
     return `<tr>
       <td data-label="#" style="font-family:var(--mono);color:var(--muted);font-size:11px">${i+1}</td>
-      <td data-label="Teams" class="match-teams"><span style="color:${t1.color}">${t1.name}</span><span class="vs">VS</span><span style="color:${t2.color}">${t2.name}</span></td>
+      <td data-label="Teams" class="match-teams">${teamLogoHTML(t1,22)}<span style="color:${t1.color}">${t1.name}</span><span class="vs">VS</span>${teamLogoHTML(t2,22)}<span style="color:${t2.color}">${t2.name}</span></td>
       <td data-label="Map" style="color:var(--muted);font-size:12px">${m.map}</td>
       <td data-label="Round" style="font-size:11px;font-family:var(--mono)">${m.round}</td>
       <td data-label="Date / Time" style="font-size:11px;color:var(--muted)">${[m.date,m.time].filter(Boolean).join(' ')||'—'}</td>
@@ -2207,7 +2455,7 @@ function getStandingsRows(){
     }
   });
   rows.forEach(r=>{r.pts=r.w*3+r.adjPts;});
-  rows.sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||(b.kills-b.deaths)-(a.kills-a.deaths));
+  rows.sort((a,b)=>b.pts-a.pts||b.kills-a.kills||b.w-a.w||a.l-b.l);
   return rows;
 }
 function renderStandings(){
@@ -2224,8 +2472,12 @@ function renderStandings(){
     return `<tr>
       <td data-label="Rank"><span class="rank-badge ${rc}">${rank+1}</span></td>
       <td data-label="Team" style="font-weight:600">
-        <span style="display:inline-block;padding:2px 6px;background:${BG(r.color)};color:${r.color};font-family:var(--mono);font-size:10px;border-radius:3px;margin-right:7px">${r.tag}</span>
-        ${r.name}${banIcon}
+        <div style="display:flex;align-items:center;gap:7px">
+          ${teamLogoHTML(S.teams[r.i],28)}
+          <div>
+            <span style="display:inline-block;padding:1px 5px;background:${BG(r.color)};color:${r.color};font-family:var(--mono);font-size:9px;border-radius:3px;margin-right:5px">${r.tag}</span>${r.name}${banIcon}
+          </div>
+        </div>
       </td>
       <td data-label="P" style="font-family:var(--mono);color:var(--muted)">${r.p}</td>
       <td data-label="W" style="color:#1D9E75;font-weight:700">${r.w}</td>
@@ -2904,6 +3156,36 @@ function initPremiumEffects(){
 // ══════════════════════════════════════════
 init();
 initPremiumEffects();
+
+// ── Logo helpers ──
+function setLogoPreview(src){
+  const box=document.getElementById('logo-preview-box');
+  if(!box) return;
+  if(src){box.innerHTML=`<img src="${src}" onerror="this.parentElement.innerHTML='<span class=ph><i class=\"ti ti-shield\"></i></span>'">`;}
+  else{box.innerHTML='<span class="ph"><i class="ti ti-shield"></i></span>';}
+}
+function previewLogoUrl(){
+  setLogoPreview(document.getElementById('m-logo-url').value.trim());
+}
+function handleLogoFile(e){
+  const file=e.target.files[0];if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{document.getElementById('m-logo-url').value=ev.target.result;setLogoPreview(ev.target.result);};
+  r.readAsDataURL(file);
+}
+function clearLogo(){
+  document.getElementById('m-logo-url').value='';
+  document.getElementById('m-logo-file').value='';
+  setLogoPreview('');
+}
+// small logo or initials emblem HTML
+function teamLogoHTML(t, size=32){
+  const r=Math.max(5,Math.round(size*0.22));
+  if(t&&t.logo) return `<img class="team-logo-sm" src="${t.logo}" style="width:${size}px;height:${size}px;border-radius:${r}px" alt="${t.name||''}" onerror="this.style.display='none'">`;
+  const fs=Math.round(size*0.38);
+  return `<div class="team-emblem-sm" style="width:${size}px;height:${size}px;border-radius:${r}px;background:${BG(t?t.color:'#888')};color:${t?t.color:'#888'};font-size:${fs}px">${initials((t&&t.name)||'?')}</div>`;
+}
+
 </script>
 </body>
 </html>
