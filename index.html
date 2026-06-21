@@ -36,6 +36,74 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-size:200% 200%;animation:ambientShift 18s ease-in-out infinite}
 @keyframes ambientShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+/* ══════════════════════════════════════════
+   PREMIUM EFFECTS — spotlight / borders / shine / entrances / reflection
+   ══════════════════════════════════════════ */
+
+/* ── 1. Mouse spotlight — soft glow that follows the cursor over the whole page ── */
+#mouse-spotlight{position:fixed;top:0;left:0;width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(232,115,10,0.10),rgba(232,115,10,0.03) 45%,transparent 70%);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:2;mix-blend-mode:screen;
+  opacity:0;transition:opacity .4s ease;will-change:transform}
+#mouse-spotlight.active{opacity:1}
+@media(hover:none),(prefers-reduced-motion:reduce){#mouse-spotlight{display:none}}
+
+/* per-card spotlight: a tighter highlight that tracks the cursor inside hovered cards */
+.spot-target{position:relative}
+.spot-target::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:radial-gradient(circle 160px at var(--mx,50%) var(--my,50%),rgba(232,115,10,0.14),transparent 70%);
+  opacity:0;transition:opacity .35s ease}
+.spot-target:hover::before{opacity:1}
+
+/* ── 4. Hero parallax — banner image drifts slightly opposite the cursor ── */
+.portal-header.has-banner .banner-img{transition:transform .15s linear}
+
+/* ── 5. Animated conic-gradient borders on featured cards ── */
+@keyframes borderSpin{to{--bspin:360deg}}
+@property --bspin{syntax:'<angle>';inherits:false;initial-value:0deg}
+.anim-border{position:relative;isolation:isolate}
+.anim-border::after{content:'';position:absolute;inset:-1px;border-radius:inherit;z-index:-1;padding:1px;
+  background:conic-gradient(from var(--bspin,0deg),transparent 0deg,rgba(232,115,10,0.9) 25deg,transparent 70deg,transparent 290deg,rgba(232,115,10,0.5) 335deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:borderSpin 4.5s linear infinite;opacity:0;transition:opacity .35s ease}
+.anim-border:hover::after,.anim-border.always-glow::after{opacity:1}
+@supports not (background:paint(x)){
+  /* fallback if @property unsupported: still spins via plain conic-gradient keyframe on background-position trick not needed; animation above degrades gracefully to static angle */
+}
+
+/* ── 6. Button shine sweep — light streak crosses on hover ── */
+.primary-btn,.ghost-btn{position:relative;overflow:hidden;isolation:isolate}
+.primary-btn::before,.ghost-btn::before{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;z-index:1;
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,0.35) 50%,transparent 100%);
+  transform:skewX(-20deg);transition:left .55s var(--ease-premium);pointer-events:none}
+.primary-btn:hover::before,.ghost-btn:hover::before{left:130%}
+
+/* ── 7. Blur-to-focus card entrances ── */
+@keyframes blurFocusIn{from{opacity:0;filter:blur(10px);transform:translateY(14px) scale(.97)}to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}}
+.team-card,.player-card,.dash-card,.perf-card,.stat-card,.bk-match{animation-name:blurFocusIn}
+
+/* ── 9. Live score flip animation ── */
+.score-flip{display:inline-block;perspective:300px}
+.score-flip.flipping{animation:scoreFlip .5s var(--ease-premium)}
+@keyframes scoreFlip{0%{transform:rotateX(0)}45%{transform:rotateX(95deg);opacity:.3}55%{transform:rotateX(-95deg);opacity:.3}100%{transform:rotateX(0);opacity:1}}
+
+/* ── 10. Glass reflection sweep — diagonal light streak across glass surfaces on hover ── */
+.team-card,.player-card,.dash-card,.stat-card,.bk-match{position:relative;overflow:hidden}
+.glass-reflect{position:absolute;top:0;left:-75%;width:50%;height:100%;z-index:1;pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,0.07) 45%,rgba(255,255,255,0.14) 50%,rgba(255,255,255,0.07) 55%,transparent 100%);
+  transform:skewX(-15deg);transition:left .65s var(--ease-premium)}
+.team-card:hover .glass-reflect,.player-card:hover .glass-reflect,.dash-card:hover .glass-reflect,.stat-card:hover .glass-reflect,.bk-match:hover .glass-reflect{left:130%}
+
+/* ── 8. Bracket connector lines (SVG, drawn on render) ── */
+.bk-connector path{fill:none;stroke:var(--orange);stroke-width:1.5;stroke-dasharray:6 4;opacity:.55;
+  stroke-dashoffset:300;animation:bkLineDraw 1.4s var(--ease-premium) forwards}
+@keyframes bkLineDraw{to{stroke-dashoffset:0}}
+
+@media(prefers-reduced-motion:reduce){
+  #mouse-spotlight,.spot-target::before,.anim-border::after,.glass-reflect{display:none!important}
+  .team-card,.player-card,.dash-card,.perf-card,.stat-card,.bk-match{animation-name:fadeUp}
+}
 .portal{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem}
 .portal-header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);position:relative}
 .portal-header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);box-shadow:0 0 20px var(--orange)}
@@ -1281,6 +1349,7 @@ function switchTab(id){
   if(id==='performance') renderPerformance();
   if(id==='noticeboard') renderNotices();
   if(id==='players') renderPlayersTab();
+  enhanceCards();
 }
 
 // ── Swipe-to-switch tabs (mobile) ──
@@ -1318,6 +1387,7 @@ function renderAll(){
   document.getElementById('hdr-sub').textContent=`${S.settings.name} · ${S.settings.mode}`;
   applyBanner();
   renderHomeDashboard();
+  enhanceCards();
 }
 
 // ══════════════════════════════════════════
@@ -1409,7 +1479,7 @@ function renderHomeTop3(){
     return `<div class="top3-slot rank-${rank+1}-slot">
       <div class="top3-kills">${p.kills}</div>
       <div class="top3-kills-lbl">kills · kd ${kd}</div>
-      <div class="top3-medal ${medalClass[rank]}">
+      <div class="top3-medal ${medalClass[rank]}${rank===0?' anim-border always-glow':''}">
         ${rank===0?`<div class="top3-crown">${crownEmoji[0]}</div>`:''}
         <span style="color:${rank===0?'#3d2800':rank===1?'#222':'#fff'}">${p.name.slice(0,2).toUpperCase()}</span>
       </div>
@@ -1975,10 +2045,11 @@ function renderSchedule(){
       <td data-label="Round" style="font-size:11px;font-family:var(--mono)">${m.round}</td>
       <td data-label="Date / Time" style="font-size:11px;color:var(--muted)">${[m.date,m.time].filter(Boolean).join(' ')||'—'}</td>
       <td data-label="Status"><span class="status-pill ${sc[m.status]}">${m.status}</span></td>
-      <td data-label="Score" style="font-family:var(--mono);font-size:13px;font-weight:600">${scoreStr}</td>
+      <td data-label="Score" style="font-family:var(--mono);font-size:13px;font-weight:600"><span class="score-flip" data-match="${m.id}">${scoreStr}</span></td>
       <td data-label="Actions"><div style="display:flex;gap:5px">${actionBtns}</div></td>
     </tr>`;
   }).join('');
+  document.querySelectorAll('#schedule-body .score-flip').forEach(el=>flipScoreIfChanged(el,el.textContent));
   updateHeaderStats();
 }
 
@@ -2248,39 +2319,37 @@ function renderBracket(){
     const editBtn=IS_ADMIN?`<span style="cursor:pointer;color:var(--muted);font-size:11px" onclick="openBracketSetup()"><i class="ti ti-pencil"></i></span>`:'';
     return `<div class="bk-match">
       <div class="bk-label"><span style="color:${labelColor}">${label}</span><div style="display:flex;align-items:center;gap:6px">${status!=='pending'?`<span class="status-pill ${sc[status]}" style="font-size:9px">${status}</span>`:''}${editBtn}</div></div>
-      <div class="bk-team ${w1?'winner':w2?'loser':''} ${t1i<0?'tbd':''}">${t1?`<span style="color:${w1?'var(--orange)':t1.color}">${t1.name}</span>`:'<span>TBD</span>'}<span class="bk-score ${w1?'win':''}">${s1!==null?s1:'—'}</span></div>
-      <div class="bk-team ${w2?'winner':w1?'loser':''} ${t2i<0?'tbd':''}">${t2?`<span style="color:${w2?'var(--orange)':t2.color}">${t2.name}</span>`:'<span>TBD</span>'}<span class="bk-score ${w2?'win':''}">${s2!==null?s2:'—'}</span></div>
+      <div class="bk-team ${w1?'winner':w2?'loser':''} ${t1i<0?'tbd':''}">${t1?`<span style="color:${w1?'var(--orange)':t1.color}">${t1.name}</span>`:'<span>TBD</span>'}<span class="bk-score score-flip ${w1?'win':''}" data-bk="${label}-1">${s1!==null?s1:'—'}</span></div>
+      <div class="bk-team ${w2?'winner':w1?'loser':''} ${t2i<0?'tbd':''}">${t2?`<span style="color:${w2?'var(--orange)':t2.color}">${t2.name}</span>`:'<span>TBD</span>'}<span class="bk-score score-flip ${w2?'win':''}" data-bk="${label}-2">${s2!==null?s2:'—'}</span></div>
     </div>`;
   }
   const rows=getStandingsRows();
   function seedBox(rank){const r=rows[rank];return r?`<div class="seed-box"><div class="seed-num">${rank+1}${['ST','ND','RD','TH'][rank]} SEED</div><span style="color:${r.color};font-weight:700">${r.name}</span></div>`:'<div class="seed-box" style="color:var(--muted)">TBD</div>';}
   const fnW=getWinner(K.final);
-  const champion=fnW>=0?`<div class="champion-box"><div style="font-size:28px;margin-bottom:4px">🏆</div><div class="lbl">Champion</div><div class="name" style="color:${tcolor(fnW)}">${tname(fnW)}</div></div>`:`<div class="champion-box"><div style="font-size:28px;margin-bottom:4px">🏆</div><div class="lbl">Champion</div><div class="name" style="color:var(--muted);font-size:16px">TBD</div></div>`;
+  const champion=fnW>=0?`<div class="champion-box anim-border always-glow"><div style="font-size:28px;margin-bottom:4px">🏆</div><div class="lbl">Champion</div><div class="name" style="color:${tcolor(fnW)}">${tname(fnW)}</div></div>`:`<div class="champion-box"><div style="font-size:28px;margin-bottom:4px">🏆</div><div class="lbl">Champion</div><div class="name" style="color:var(--muted);font-size:16px">TBD</div></div>`;
   document.getElementById('bracket-ipl-render').innerHTML=`
   <div style="font-size:10px;font-family:var(--mono);letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:1.5rem">GROUP STAGE → KNOCKOUT — IPL FORMAT</div>
-  <div style="display:flex;align-items:center;gap:16px;min-width:900px">
-    <div style="min-width:130px">${[0,1,2,3].map(i=>seedBox(i)).join('')}</div>
-    <div style="color:var(--border2);font-size:20px">›</div>
-    <div style="min-width:170px">
+  <div class="bk-row" style="display:flex;align-items:center;gap:16px;min-width:900px;position:relative">
+    <div class="bk-col" style="min-width:130px">${[0,1,2,3].map(i=>seedBox(i)).join('')}</div>
+    <div class="bk-col" style="min-width:170px">
       <div style="font-size:9px;font-family:var(--mono);color:var(--orange);letter-spacing:2px;text-align:center;margin-bottom:12px">ROUND 1</div>
       ${matchBox('QUALIFIER 1','var(--orange)',K.q1.t1,K.q1.t2,K.q1.s1,K.q1.s2,K.q1.status)}
       <div style="height:16px"></div>
       ${matchBox('ELIMINATOR','var(--warning)',K.elim.t1,K.elim.t2,K.elim.s1,K.elim.s2,K.elim.status)}
       ${K.elim.status==='done'?`<div style="font-size:10px;font-family:var(--mono);color:#E24B4A;text-align:center;margin-top:6px">❌ ${tname(getLoser(K.elim))} Eliminated</div>`:''}
     </div>
-    <div style="color:var(--border2);font-size:20px">›</div>
-    <div style="min-width:170px">
+    <div class="bk-col" style="min-width:170px">
       <div style="font-size:9px;font-family:var(--mono);color:var(--info);letter-spacing:2px;text-align:center;margin-bottom:12px">QUALIFIER 2</div>
       <div style="margin-top:24px">${matchBox('QUALIFIER 2','var(--info)',K.q2.t1,K.q2.t2,K.q2.s1,K.q2.s2,K.q2.status)}</div>
     </div>
-    <div style="color:var(--border2);font-size:20px">›</div>
-    <div style="min-width:170px">
+    <div class="bk-col" style="min-width:170px">
       <div style="font-size:9px;font-family:var(--mono);color:var(--success);letter-spacing:2px;text-align:center;margin-bottom:12px">FINAL</div>
       ${matchBox('GRAND FINAL','var(--success)',K.final.t1,K.final.t2,K.final.s1,K.final.s2,K.final.status)}
     </div>
-    <div style="color:var(--border2);font-size:20px">›</div>
-    ${champion}
+    <div class="bk-col">${champion}</div>
   </div>`;
+  document.querySelectorAll('#bracket-ipl-render .score-flip').forEach(el=>flipScoreIfChanged(el,el.textContent));
+  requestAnimationFrame(drawBracketConnectors);
 }
 
 function openBracketSetup(){
@@ -2492,6 +2561,9 @@ function startBgCanvas(){
     });
   }
 
+  // ── 3. Floating embers — warm rising sparks, respawn at the bottom when they burn out ──
+  const embers=REDUCED_MOTION?[]:makeEmbers(window.innerWidth,window.innerHeight,34);
+
   let scanY=-100;
   let frame=0;
 
@@ -2531,6 +2603,24 @@ function startBgCanvas(){
       }
       ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
       ctx.fillStyle=`rgba(${p.color},${p.alpha})`;ctx.fill();
+    });
+
+    // Embers — rise, flicker, drift slightly, respawn from the bottom
+    embers.forEach(e=>{
+      e.y+=e.vy;e.x+=e.vx+Math.sin(e.flicker)*0.15;
+      e.flicker+=0.05;
+      e.life+=0.004;
+      if(e.y<-20||e.life>=1){
+        e.y=H+Math.random()*40;e.x=Math.random()*W;e.life=0;
+      }
+      const fadeIn=Math.min(e.life*6,1);
+      const fadeOut=1-Math.max((e.life-0.75)*4,0);
+      const a=Math.min(fadeIn,fadeOut)*0.7;
+      const flick=0.6+Math.sin(e.flicker*3)*0.4;
+      ctx.beginPath();ctx.arc(e.x,e.y,e.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,${140+Math.floor(flick*60)},40,${a})`;
+      ctx.shadowBlur=6;ctx.shadowColor='rgba(232,115,10,0.8)';
+      ctx.fill();ctx.shadowBlur=0;
     });
 
     // Scan line
@@ -2657,9 +2747,162 @@ function isTeamBannedInMatch(teamIdx, matchIdx){
 }
 
 // ══════════════════════════════════════════
+//  PREMIUM EFFECTS
+// ══════════════════════════════════════════
+const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ── 1. Mouse spotlight (global) + per-card spotlight tracking ──
+function initMouseSpotlight(){
+  if(REDUCED_MOTION) return;
+  const spot=document.createElement('div');
+  spot.id='mouse-spotlight';
+  document.body.appendChild(spot);
+  let raf=null,tx=0,ty=0;
+  window.addEventListener('pointermove',e=>{
+    if(e.pointerType==='touch') return;
+    tx=e.clientX;ty=e.clientY;
+    spot.classList.add('active');
+    if(!raf) raf=requestAnimationFrame(()=>{
+      spot.style.transform=`translate(${tx}px,${ty}px) translate(-50%,-50%)`;
+      raf=null;
+    });
+  },{passive:true});
+  window.addEventListener('pointerleave',()=>spot.classList.remove('active'));
+  document.addEventListener('pointermove',e=>{
+    if(e.pointerType==='touch') return;
+    const el=e.target.closest('.spot-target');
+    if(!el) return;
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    el.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  },{passive:true});
+}
+
+// ── 4. Hero parallax — banner drifts opposite cursor, subtle scroll parallax too ──
+function initHeroParallax(){
+  if(REDUCED_MOTION) return;
+  const header=document.getElementById('portal-header');
+  const img=document.getElementById('banner-img');
+  if(!header||!img) return;
+  header.addEventListener('mousemove',e=>{
+    if(!header.classList.contains('has-banner')) return;
+    const r=header.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-0.5;
+    const py=(e.clientY-r.top)/r.height-0.5;
+    img.style.transform=`scale(1.06) translate(${px*-14}px,${py*-10}px)`;
+  });
+  header.addEventListener('mouseleave',()=>{
+    if(header.classList.contains('has-banner')) img.style.transform='scale(1.06) translate(0,0)';
+  });
+  window.addEventListener('scroll',()=>{
+    if(!header.classList.contains('has-banner')) return;
+    const y=Math.min(window.scrollY,300);
+    img.style.transform=`scale(1.06) translateY(${y*0.12}px)`;
+  },{passive:true});
+}
+
+// ── 7/10. Card enhancement: inject reflection sweep + spotlight tracking on rendered cards ──
+function enhanceCards(){
+  document.querySelectorAll('.team-card,.player-card,.dash-card,.stat-card,.bk-match').forEach(card=>{
+    card.classList.add('spot-target');
+    if(!card.querySelector(':scope > .glass-reflect')){
+      const r=document.createElement('div');
+      r.className='glass-reflect';
+      card.appendChild(r);
+    }
+  });
+}
+
+// ── 9. Live score flip — watches schedule/bracket scores and flips the digit on change ──
+const _scoreFlipCache=new WeakMap();
+function flipScoreIfChanged(el,newVal){
+  if(!el) return;
+  const prev=_scoreFlipCache.get(el);
+  if(prev!==undefined&&prev!==newVal&&!REDUCED_MOTION){
+    el.classList.remove('flipping');
+    void el.offsetWidth;
+    el.classList.add('flipping');
+  }
+  _scoreFlipCache.set(el,newVal);
+}
+
+// ── 8. Bracket connector lines — SVG lines drawn between each match column ──
+function drawBracketConnectors(){
+  const row=document.querySelector('#bracket-ipl-render .bk-row');
+  if(!row) return;
+  const old=row.querySelector('svg.bk-connector');
+  if(old) old.remove();
+  const cols=Array.from(row.querySelectorAll(':scope > .bk-col'));
+  if(cols.length<2) return;
+  const rect=row.getBoundingClientRect();
+  if(rect.width===0) return;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','bk-connector');
+  svg.setAttribute('width',rect.width);
+  svg.setAttribute('height',rect.height);
+  svg.style.position='absolute';svg.style.left='0';svg.style.top='0';svg.style.pointerEvents='none';svg.style.zIndex='0';
+  let pathsD='';
+  for(let i=0;i<cols.length-1;i++){
+    const a=cols[i].getBoundingClientRect(), b=cols[i+1].getBoundingClientRect();
+    const x1=a.right-rect.left, x2=b.left-rect.left;
+    const y=(a.top+a.height/2)-rect.top;
+    const y2=(b.top+b.height/2)-rect.top;
+    if(x2<=x1) continue;
+    const midX=(x1+x2)/2;
+    pathsD+=`<path d="M${x1},${y} C${midX},${y} ${midX},${y2} ${x2},${y2}"/>`;
+  }
+  svg.innerHTML=pathsD;
+  row.insertBefore(svg,row.firstChild);
+}
+
+// ── 3. Floating embers — warm rising particles layered into the existing bg canvas ──
+function makeEmbers(W,H,count=36){
+  const embers=[];
+  for(let i=0;i<count;i++){
+    embers.push({
+      x:Math.random()*W,y:H+Math.random()*200,
+      vy:-(Math.random()*0.6+0.25),
+      vx:(Math.random()-0.5)*0.3,
+      size:Math.random()*2+0.6,
+      life:Math.random(),
+      flicker:Math.random()*Math.PI*2
+    });
+  }
+  return embers;
+}
+
+// ── 6. Lenis smooth scrolling ──
+async function initLenis(){
+  if(REDUCED_MOTION) return;
+  try{
+    if(!window.Lenis){
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script');
+        s.src='https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.42/dist/lenis.min.js';
+        s.onload=res;s.onerror=rej;
+        document.head.appendChild(s);
+      });
+    }
+    if(!window.Lenis) return;
+    const lenis=new window.Lenis({duration:1.1,smoothWheel:true,smoothTouch:false});
+    function raf(time){lenis.raf(time);requestAnimationFrame(raf);}
+    requestAnimationFrame(raf);
+    window._lenis=lenis;
+  }catch(e){ /* CDN unreachable — page still works with native scroll */ }
+}
+
+function initPremiumEffects(){
+  initMouseSpotlight();
+  initHeroParallax();
+  enhanceCards();
+  initLenis();
+}
+
+// ══════════════════════════════════════════
 //  START
 // ══════════════════════════════════════════
 init();
+initPremiumEffects();
 </script>
 </body>
 </html>
