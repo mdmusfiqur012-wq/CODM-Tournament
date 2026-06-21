@@ -649,7 +649,22 @@ body.admin-mode .admin-only-block{display:block}
     </div>
   </div>
 
-  <div class="stats-row">
+  <div class="tab-bar-wrap">
+    <div class="tab-bar-label">⚡ EXPLORE PORTAL</div>
+    <div class="tab-bar" role="tablist">
+      <button class="tab active" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
+      <button class="tab" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
+      <button class="tab" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
+      <button class="tab" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
+      <button class="tab" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
+      <button class="tab" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
+      <button class="tab" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
+      <button class="tab admin-only" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
+    </div>
+  </div>
+
+  
+<div class="stats-row">
     <div class="stat-card"><div class="val" id="stat-teams">—</div><div class="lbl">Teams</div></div>
     <div class="stat-card"><div class="val" id="stat-players">—</div><div class="lbl">Players</div></div>
     <div class="stat-card"><div class="val" id="stat-matches">—</div><div class="lbl">Matches</div></div>
@@ -716,20 +731,6 @@ body.admin-mode .admin-only-block{display:block}
   <!-- ═══════════════════════════════════════════════════════════════ -->
 
   <!-- ═══ NAVIGATION ═══ -->
-  <div class="tab-bar-wrap">
-    <div class="tab-bar-label">⚡ EXPLORE PORTAL</div>
-    <div class="tab-bar" role="tablist">
-      <button class="tab active" onclick="switchTab('teams')"><i class="ti ti-users"></i> Teams</button>
-      <button class="tab" onclick="switchTab('players')"><i class="ti ti-user-circle"></i> Players</button>
-      <button class="tab" onclick="switchTab('schedule')"><i class="ti ti-calendar"></i> Schedule</button>
-      <button class="tab" onclick="switchTab('bracket')"><i class="ti ti-tournament"></i> Bracket</button>
-      <button class="tab" onclick="switchTab('standings')"><i class="ti ti-trophy"></i> Standings</button>
-      <button class="tab" onclick="switchTab('performance')"><i class="ti ti-chart-bar"></i> Performance</button>
-      <button class="tab" onclick="switchTab('noticeboard')"><i class="ti ti-speakerphone"></i> Notice Board</button>
-      <button class="tab admin-only" onclick="switchTab('settings')"><i class="ti ti-adjustments"></i> Settings</button>
-    </div>
-  </div>
-
   <!-- TEAMS -->
   <div id="tab-teams" class="tab-pane active">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px">
